@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using System;
 using Object = UnityEngine.Object;
 
-namespace Sketch {
+namespace MeshKit {
 
 // Used to pass Span<T> to Burst functions
 unsafe readonly struct UntypedSpan
@@ -60,4 +60,4 @@ static class Util
     }
 }
 
-} // namespace Sketch
+} // namespace MeshKit

@@ -1,24 +1,25 @@
-using UnityEngine;
-using UnityEngine.Rendering;
-using Unity.Burst;
 using Unity.Mathematics;
-using System;
+using UnityEngine.Rendering;
+using IndexFormat = UnityEngine.Rendering.IndexFormat;
+using Mesh = UnityEngine.Mesh;
+using MeshTopology = UnityEngine.MeshTopology;
+using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
 
-namespace Sketch {
+namespace MeshKit {
 
-// Modeler array -> Single combined mesh
+// Baker: Shape instances -> Combined single mesh
 [BurstCompile]
-static class MeshBuilder
+static class Baker
 {
     // Public method
-    public static void Build(Span<Modeler> modelers, Mesh mesh)
+    public static void Bake(System.Span<ShapeInstance> instances, Mesh mesh)
     {
         // Total vertex / index count
         var (vcount, icount) = (0, 0);
-        foreach (var m in modelers)
+        foreach (var i in instances)
         {
-            vcount += m.VertexCount;
-            icount += m.IndexCount;
+            vcount += i.VertexCount;
+            icount += i.IndexCount;
         }
 
         // Native arrays for vertex / color / index data
@@ -27,10 +28,10 @@ static class MeshBuilder
         using var ibuf = Util.NewNativeArray<uint>(icount);
 
         // Data construction
-        BuildDataBursted(modelers.GetUntyped(),
-                         vbuf.GetUntypedSpan(),
-                         cbuf.GetUntypedSpan(),
-                         ibuf.GetUntypedSpan());
+        BakeDataBursted(instances.GetUntyped(),
+                        vbuf.GetUntypedSpan(),
+                        cbuf.GetUntypedSpan(),
+                        ibuf.GetUntypedSpan());
 
         // Mesh object construction
         mesh.Clear();
@@ -44,12 +45,12 @@ static class MeshBuilder
 
     // Burst accelerated vertex data construction
     [BurstCompile]
-    static void BuildDataBursted(in UntypedSpan u_modelers,
-                                 in UntypedSpan u_vspan,
-                                 in UntypedSpan u_cspan,
-                                 in UntypedSpan u_ispan)
+    static void BakeDataBursted(in UntypedSpan u_instances,
+                                in UntypedSpan u_vspan,
+                                in UntypedSpan u_cspan,
+                                in UntypedSpan u_ispan)
     {
-        var modelers = u_modelers.GetTyped<Modeler>();
+        var instances = u_instances.GetTyped<ShapeInstance>();
 
         // Warning: Not sure but this "1" extension is needed.
         var vspan = u_vspan.GetTyped<float3>(1);
@@ -58,15 +59,15 @@ static class MeshBuilder
 
         var (voffs, ioffs) = (0, 0);
 
-        foreach (var m in modelers)
+        foreach (var i in instances)
         {
-            var (vc, ic) = (m.VertexCount, m.IndexCount);
+            var (vc, ic) = (i.VertexCount, i.IndexCount);
 
             var vslice = vspan.Slice(voffs, vc);
             var cslice = cspan.Slice(voffs, vc);
             var islice = ispan.Slice(ioffs, ic);
 
-            m.BuildGeometry(vslice, cslice, islice, (uint)voffs);
+            i.Bake(vslice, cslice, islice, (uint)voffs);
 
             voffs += vc;
             ioffs += ic;
@@ -74,4 +75,4 @@ static class MeshBuilder
     }
 }
 
-} // namespace Sketch
+} // namespace MeshKit

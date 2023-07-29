@@ -1,23 +1,22 @@
-using UnityEngine;
 using Unity.Mathematics;
 using System;
 
-namespace Sketch {
+namespace MeshKit {
 
-// A simple copy-instance modeler
-readonly struct Modeler
+// Unmanaged shape instance descriptor
+readonly struct ShapeInstance
 {
-    #region Model properties
+    #region Private fields
 
     readonly float3 _position;
     readonly quaternion _rotation;
     readonly float _scale;
     readonly float4 _color;
-    readonly GeometryCacheRef _shape;
+    readonly ShapeRef _shape;
 
     #endregion
 
-    #region Private utility properties
+    #region Utility properties
 
     public int VertexCount => _shape.Vertices.Length;
     public int IndexCount => _shape.Indices.Length;
@@ -26,23 +25,23 @@ readonly struct Modeler
 
     #region Public methods
 
-    public Modeler(float3 position,
-                   quaternion rotation,
-                   float scale,
-                   Color color,
-                   GeometryCacheRef shape)
+    public ShapeInstance(float3 position,
+                         quaternion rotation,
+                         float scale,
+                         float4 color,
+                         ShapeRef shape)
     {
         _position = position;
         _rotation = rotation;
         _scale = scale;
-        _color = (Vector4)color;
+        _color = color;
         _shape = shape;
     }
 
-    public void BuildGeometry(Span<float3> vertices,
-                              Span<float4> uvs,
-                              Span<uint> indices,
-                              uint indexOffset)
+    public void Bake(Span<float3> vertices,
+                     Span<float4> uvs,
+                     Span<uint> indices,
+                     uint indexOffset)
     {
         CopyVertices(vertices);
         FillUVs(uvs);
@@ -74,4 +73,4 @@ readonly struct Modeler
     #endregion
 }
 
-} // namespace Sketch
+} // namespace MeshKit

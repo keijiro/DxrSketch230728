@@ -36,10 +36,10 @@ struct SceneConfig
 static class SceneBuilder
 {
     // Public entry point
-    public static Span<Modeler> Build
+    public static Span<MeshKit.ShapeInstance> Build
       (in SceneConfig cfg,
-       ReadOnlySpan<GeometryCacheRef> shapes,
-       Span<Modeler> buffer)
+       ReadOnlySpan<MeshKit.ShapeRef> shapes,
+       Span<MeshKit.ShapeInstance> buffer)
     {
         var spline = cfg.Spline[0];
 
@@ -64,12 +64,12 @@ static class SceneBuilder
     }
 
     // Builder method
-    static Span<Modeler> AddNode
+    static Span<MeshKit.ShapeInstance> AddNode
       (in SceneConfig cfg,
-       ReadOnlySpan<GeometryCacheRef> shapes,
+       ReadOnlySpan<MeshKit.ShapeRef> shapes,
        float3 pos, float3 tan, float3 up,
        Random rand,
-       Span<Modeler> buffer)
+       Span<MeshKit.ShapeInstance> buffer)
     {
         //var ry = quaternion.RotateY(rand.NextFloat(math.PI * 2));
         //var rx = quaternion.RotateX(rand.NextFloat(math.PI * 0.5f));
@@ -80,10 +80,10 @@ static class SceneBuilder
 
         var scale = math.lerp(0.2f, 1, math.pow(rand.NextFloat(), 1.5f));
 
-        buffer[0] = new Modeler(position: pos,
+        buffer[0] = new MeshKit.ShapeInstance(position: pos,
                                 rotation: rot,
                                 scale: scale,
-                                color: Color.white,
+                                color: (Vector4)Color.white,
                                 shape: shapes[rand.NextInt(shapes.Length)]);
 
         return buffer.Slice(0, 1);

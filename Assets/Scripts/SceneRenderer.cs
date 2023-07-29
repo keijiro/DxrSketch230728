@@ -29,7 +29,7 @@ sealed class SceneRenderer : MonoBehaviour
       => ConstructMesh();
 
     void OnDestroy()
-      => Util.DestroyObject(_mesh);
+      => MeshKit.Util.DestroyObject(_mesh);
 
     void OnValidate()
       => ConstructMesh(true);
@@ -48,7 +48,7 @@ sealed class SceneRenderer : MonoBehaviour
     #region Private members
 
     Mesh _mesh;
-    Modeler[] _sceneBuffer;
+    MeshKit.ShapeInstance[] _sceneBuffer;
 
     void ConstructMesh(bool forceUpdate = false)
     {
@@ -56,14 +56,14 @@ sealed class SceneRenderer : MonoBehaviour
 
         // Scene buffer (modeler array) allocation
         if ((_sceneBuffer?.Length ?? 0) != _modelCapacity)
-            _sceneBuffer = new Modeler[_modelCapacity];
+            _sceneBuffer = new MeshKit.ShapeInstance[_modelCapacity];
 
         // Geometry cache (should live until mesh building)
-        var caches = new GeometryCache[_meshes.Length];
-        var shapes = new GeometryCacheRef[_meshes.Length];
+        var caches = new MeshKit.Shape[_meshes.Length];
+        var shapes = new MeshKit.ShapeRef[_meshes.Length];
         for (var i = 0; i < _meshes.Length; i++)
          {
-             caches[i] = new GeometryCache(_meshes[i]);
+             caches[i] = new MeshKit.Shape(_meshes[i]);
              shapes[i] = caches[i];
          }
 
@@ -71,7 +71,7 @@ sealed class SceneRenderer : MonoBehaviour
         var scene = SceneBuilder.Build(_config, shapes, _sceneBuffer);
 
         // Mesh building from the model array
-        MeshBuilder.Build(scene, _mesh);
+        MeshKit.Baker.Bake(scene, _mesh);
 
         foreach (var cache in caches) cache.Dispose();
     }
