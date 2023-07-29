@@ -1,9 +1,10 @@
 using Unity.Mathematics;
 using UnityEngine.Rendering;
+
+using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
 using IndexFormat = UnityEngine.Rendering.IndexFormat;
 using Mesh = UnityEngine.Mesh;
 using MeshTopology = UnityEngine.MeshTopology;
-using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
 
 namespace MeshKit {
 
