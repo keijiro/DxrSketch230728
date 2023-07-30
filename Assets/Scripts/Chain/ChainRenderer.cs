@@ -22,15 +22,11 @@ public sealed class ChainRenderer : MonoBehaviour
 
     #region MonoBehaviour implementation
 
-    void Start()
-    {
-        _mesh = new Mesh();
-        _mesh.hideFlags = HideFlags.DontSave;
-        GetComponent<MeshFilter>().sharedMesh = _mesh;
-    }
+    void OnEnable()
+      => UnityEngine.Splines.Spline.Changed += OnSplineChanged;
 
-    void Update()
-      => ConstructMesh();
+    void OnDisable()
+      => UnityEngine.Splines.Spline.Changed -= OnSplineChanged;
 
     void OnDestroy()
     {
@@ -44,29 +40,34 @@ public sealed class ChainRenderer : MonoBehaviour
     void OnValidate()
       => ConstructMesh();
 
-    void OnSplineChanged(Spline spline, int knot, SplineModification mod)
-      => OnValidate();
-
-    void OnEnable()
-      => UnityEngine.Splines.Spline.Changed += OnSplineChanged;
-
-    void OnDisable()
-      => UnityEngine.Splines.Spline.Changed -= OnSplineChanged;
+    void Update()
+      => ConstructMesh();
 
     #endregion
 
     #region Private members
 
-    Mesh _mesh;
-    ShapeInstance[] _instances;
     ShapeCache _shapeCache;
+    ShapeInstance[] _instances;
+    Mesh _mesh;
+
+    void OnSplineChanged(Spline spline, int knot, SplineModification mod)
+      => OnValidate();
 
     void ConstructMesh()
     {
-        if (_mesh == null) return;
         if (Shapes == null || Shapes.Length == 0) return;
 
-        if ((_instances?.Length ?? 0) != Config.InstanceCount)
+        if (_mesh == null)
+        {
+            _mesh = new Mesh();
+            _mesh.hideFlags = HideFlags.DontSave;
+            GetComponent<MeshFilter>().sharedMesh = _mesh;
+        }
+
+        _mesh.Clear();
+
+        if (_instances?.Length != Config.InstanceCount)
             _instances = new ShapeInstance[Config.InstanceCount];
 
         if (_shapeCache == null)
@@ -78,7 +79,6 @@ public sealed class ChainRenderer : MonoBehaviour
           (Config, Spline.Spline, _shapeCache.ShapeRefs, _instances);
 
         Baker.Bake(_instances, _mesh);
-
     }
 
     #endregion
