@@ -7,7 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 namespace MeshKit {
 
 // Managed shape container
-sealed class Shape : System.IDisposable
+public sealed class Shape : System.IDisposable
 {
     public NativeArray<float3> Vertices;
     public NativeArray<uint> Indices;
@@ -28,7 +28,7 @@ sealed class Shape : System.IDisposable
 }
 
 // Unmanaged weak reference to shape contents
-readonly struct ShapeRef
+public readonly struct ShapeRef
 {
     public readonly NativeSlice<float3> Vertices;
     public readonly NativeSlice<uint> Indices;
