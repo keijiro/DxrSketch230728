@@ -26,19 +26,11 @@ public sealed class ChainRenderer : MonoBehaviour
       => UnityEngine.Splines.Spline.Changed += OnSplineChanged;
 
     void OnDisable()
-      => UnityEngine.Splines.Spline.Changed -= OnSplineChanged;
-
-    void OnDestroy()
     {
-        _shapeCache?.Dispose();
-        _shapeCache = null;
-
-        Util.DestroyObject(_mesh);
-        _mesh = null;
+        UnityEngine.Splines.Spline.Changed -= OnSplineChanged;
+        _shapeCache.Destroy();
+        _mesh.Destroy();
     }
-
-    void OnValidate()
-      => ConstructMesh();
 
     void Update()
       => ConstructMesh();
@@ -47,38 +39,22 @@ public sealed class ChainRenderer : MonoBehaviour
 
     #region Private members
 
-    ShapeCache _shapeCache;
-    ShapeInstance[] _instances;
-    Mesh _mesh;
+    ShapeCache _shapeCache = new ShapeCache();
+    TempMesh _mesh = new TempMesh();
 
     void OnSplineChanged(Spline spline, int knot, SplineModification mod)
-      => OnValidate();
+      => ConstructMesh();
 
     void ConstructMesh()
     {
-        if (Shapes == null || Shapes.Length == 0) return;
-
-        if (_mesh == null)
-        {
-            _mesh = new Mesh();
-            _mesh.hideFlags = HideFlags.DontSave;
-            GetComponent<MeshFilter>().sharedMesh = _mesh;
-        }
-
         _mesh.Clear();
 
-        if (_instances?.Length != Config.InstanceCount)
-            _instances = new ShapeInstance[Config.InstanceCount];
+        if (Shapes == null || Shapes.Length == 0) return;
+        _shapeCache.Update(Shapes);
 
-        if (_shapeCache == null)
-            _shapeCache = new ShapeCache(Shapes);
-        else
-            _shapeCache.Update(Shapes);
-
-        ChainBuilder.Build
-          (Config, Spline.Spline, _shapeCache.ShapeRefs, _instances);
-
-        Baker.Bake(_instances, _mesh);
+        var instances = ShapeInstanceBuffer.Get(Config.InstanceCount);
+        ChainBuilder.Build(Config, Spline.Spline, _shapeCache, instances);
+        Baker.Bake(instances, _mesh.Attach(this));
     }
 
     #endregion

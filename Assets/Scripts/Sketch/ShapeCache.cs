@@ -1,19 +1,19 @@
-using Mesh = UnityEngine.Mesh;
 using System;
 using MeshKit;
+using Mesh = UnityEngine.Mesh;
 
-namespace MeshKit {
+namespace Sketch {
 
-public sealed class ShapeCache : IDisposable
+sealed class ShapeCache
 {
     #region Public members
 
+    public static implicit operator ReadOnlySpan<ShapeRef>(ShapeCache self)
+      => self.ShapeRefs;
+
     public ReadOnlySpan<ShapeRef> ShapeRefs => _refs;
 
-    public ShapeCache(ReadOnlySpan<Mesh> meshes)
-      => Update(meshes);
-
-    public void Dispose()
+    public void Destroy()
       => Release();
 
     public void Update(ReadOnlySpan<Mesh> meshes)
@@ -62,4 +62,4 @@ public sealed class ShapeCache : IDisposable
     #endregion
 }
 
-} // namespace MeshKit
+} // namespace Sketch
