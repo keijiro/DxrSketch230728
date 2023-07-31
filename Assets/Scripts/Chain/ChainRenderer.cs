@@ -23,17 +23,17 @@ public sealed class ChainRenderer : MonoBehaviour
     #region MonoBehaviour implementation
 
     void OnEnable()
-      => UnityEngine.Splines.Spline.Changed += OnSplineChanged;
+      => SplineObserver.OnModified += OnSplineModified;
 
     void OnDisable()
     {
-        UnityEngine.Splines.Spline.Changed -= OnSplineChanged;
+        SplineObserver.OnModified -= OnSplineModified;
         _shapeCache.Destroy();
         _mesh.Destroy();
     }
 
     void Update()
-      => ConstructMesh();
+      => ConstructMesh(true);
 
     #endregion
 
@@ -42,11 +42,13 @@ public sealed class ChainRenderer : MonoBehaviour
     ShapeCache _shapeCache = new ShapeCache();
     TempMesh _mesh = new TempMesh();
 
-    void OnSplineChanged(Spline spline, int knot, SplineModification mod)
-      => ConstructMesh();
+    void OnSplineModified(Spline spline)
+      => ConstructMesh(spline == Spline.Spline);
 
-    void ConstructMesh()
+    void ConstructMesh(bool forceUpdate)
     {
+        if (!forceUpdate) return;
+
         _mesh.Clear();
 
         if (Shapes == null || Shapes.Length == 0) return;
