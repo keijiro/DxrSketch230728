@@ -1,12 +1,13 @@
 using Unity.Mathematics;
 using UnityEngine.Rendering;
+using Sketch.Common;
 
 using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
 using IndexFormat = UnityEngine.Rendering.IndexFormat;
 using Mesh = UnityEngine.Mesh;
 using MeshTopology = UnityEngine.MeshTopology;
 
-namespace MeshKit {
+namespace Sketch.MeshKit {
 
 // Baker: Shape instances -> Combined single mesh
 [BurstCompile]
@@ -67,4 +68,4 @@ static class Baker
     }
 }
 
-} // namespace MeshKit
+} // namespace Sketch.MeshKit

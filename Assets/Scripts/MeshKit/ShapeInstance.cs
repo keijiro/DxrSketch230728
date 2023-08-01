@@ -1,7 +1,7 @@
 using System;
 using Unity.Mathematics;
 
-namespace MeshKit {
+namespace Sketch.MeshKit {
 
 // Unmanaged shape instance descriptor
 readonly struct ShapeInstance
@@ -73,4 +73,4 @@ readonly struct ShapeInstance
     #endregion
 }
 
-} // namespace MeshKit
+} // namespace Sketch.MeshKit

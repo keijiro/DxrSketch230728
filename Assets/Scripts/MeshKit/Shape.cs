@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Mesh = UnityEngine.Mesh;
 using Vector3 = UnityEngine.Vector3;
 
-namespace MeshKit {
+namespace Sketch.MeshKit {
 
 // Managed shape container
 public sealed class Shape : System.IDisposable
@@ -44,4 +44,4 @@ public readonly struct ShapeRef
       => new ShapeRef(shape);
 }
 
-} // namespace MeshKit
+} // namespace Sketch.MeshKit

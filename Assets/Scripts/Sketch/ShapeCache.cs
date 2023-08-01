@@ -1,5 +1,5 @@
+using Sketch.MeshKit;
 using System;
-using MeshKit;
 using Mesh = UnityEngine.Mesh;
 
 namespace Sketch {
