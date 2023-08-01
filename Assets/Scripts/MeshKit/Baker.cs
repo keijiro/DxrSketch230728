@@ -29,10 +29,7 @@ static class Baker
         using var ibuf = Util.NewNativeArray<uint>(icount);
 
         // Data construction
-        BakeDataBursted(instances.GetUntyped(),
-                        vbuf.GetUntypedSpan(),
-                        cbuf.GetUntypedSpan(),
-                        ibuf.GetUntypedSpan());
+        BakeDataBursted(instances, vbuf, cbuf, ibuf);
 
         // Mesh object construction
         mesh.Clear();
@@ -46,27 +43,21 @@ static class Baker
 
     // Burst accelerated vertex data construction
     [BurstCompile]
-    static void BakeDataBursted(in UntypedSpan u_instances,
-                                in UntypedSpan u_vspan,
-                                in UntypedSpan u_cspan,
-                                in UntypedSpan u_ispan)
+    static void BakeDataBursted(in RawSpan<ShapeInstance> instances,
+                                in RawSpan<float3> vspan,
+                                in RawSpan<float4> cspan,
+                                in RawSpan<uint> ispan)
     {
-        var instances = u_instances.GetTyped<ShapeInstance>();
-
-        // Warning: Not sure but this "1" extension is needed.
-        var vspan = u_vspan.GetTyped<float3>(1);
-        var cspan = u_cspan.GetTyped<float4>(1);
-        var ispan = u_ispan.GetTyped<uint>(1);
-
         var (voffs, ioffs) = (0, 0);
 
-        foreach (var i in instances)
+        foreach (var i in instances.GetTyped())
         {
             var (vc, ic) = (i.VertexCount, i.IndexCount);
 
-            var vslice = vspan.Slice(voffs, vc);
-            var cslice = cspan.Slice(voffs, vc);
-            var islice = ispan.Slice(ioffs, ic);
+            // Warning: Not sure but this "1" extension is needed.
+            var vslice = vspan.GetTyped(1).Slice(voffs, vc);
+            var cslice = cspan.GetTyped(1).Slice(voffs, vc);
+            var islice = ispan.GetTyped(1).Slice(ioffs, ic);
 
             i.Bake(vslice, cslice, islice, (uint)voffs);
 

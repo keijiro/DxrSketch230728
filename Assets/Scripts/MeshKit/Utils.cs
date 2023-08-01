@@ -7,35 +7,55 @@ using UnsafeUtility = Unity.Collections.LowLevel.Unsafe.NativeArrayUnsafeUtility
 namespace MeshKit {
 
 // Used to pass Span<T> to Burst functions
-unsafe readonly struct UntypedSpan
+unsafe readonly ref struct RawSpan<T> where T : unmanaged
 {
     public readonly void* Pointer;
     public readonly int Length;
 
-    public Span<T> GetTyped<T>(int ext = 0)
+    public Span<T> GetTyped(int ext = 0)
       => new Span<T>(Pointer, Length + ext);
 
-    public UntypedSpan(void* ptr, int len)
+    public RawSpan(void* ptr, int len)
     {
         Pointer = ptr;
         Length = len;
     }
+
+    public static implicit operator RawSpan<T>
+      (in Span<T> span)
+    {
+        fixed (T* p = span) return new RawSpan<T>(p, span.Length);
+    }
+
+    public static implicit operator RawSpan<T>
+      (in NativeArray<T> array)
+        => new RawSpan<T>(UnsafeExtensions.GetUnsafePtr(array), array.Length);
 }
 
 // Used to pass ReadonlySpan<T> to Burst functions
-unsafe readonly struct UntypedReadOnlySpan
+unsafe readonly ref struct ReadOnlyRawSpan<T> where T : unmanaged
 {
     public readonly void* Pointer;
     public readonly int Length;
 
-    public ReadOnlySpan<T> GetTyped<T>(int ext = 0)
+    public ReadOnlySpan<T> GetTyped(int ext = 0)
       => new ReadOnlySpan<T>(Pointer, Length + ext);
 
-    public UntypedReadOnlySpan(void* ptr, int len)
+    public ReadOnlyRawSpan(void* ptr, int len)
     {
         Pointer = ptr;
         Length = len;
     }
+
+    public static implicit operator ReadOnlyRawSpan<T>
+      (in ReadOnlySpan<T> span)
+    {
+        fixed (T* p = span) return new ReadOnlyRawSpan<T>(p, span.Length);
+    }
+
+    public static implicit operator ReadOnlyRawSpan<T>
+      (in NativeArray<T> array)
+        => new ReadOnlyRawSpan<T>(UnsafeExtensions.GetUnsafePtr(array), array.Length);
 }
 
 static class UnsafeExtensions
@@ -50,29 +70,29 @@ static class UnsafeExtensions
       GetSpan<T>(this NativeArray<T> array) where T : unmanaged
         => new Span<T>(GetUnsafePtr(array), array.Length);
 
-    // Span -> UntypedSpan
-    public unsafe static UntypedSpan
-      GetUntyped<T>(this Span<T> span) where T : unmanaged
+    // Span -> RawSpan
+    public unsafe static RawSpan<T>
+      GetRaw<T>(this Span<T> span) where T : unmanaged
     {
-        fixed (T* p = span) return new UntypedSpan(p, span.Length);
+        fixed (T* p = span) return new RawSpan<T>(p, span.Length);
     }
 
-    // ReadonlySpan -> UntypedReadOnlySpan
-    public unsafe static UntypedReadOnlySpan
-      GetUntyped<T>(this ReadOnlySpan<T> span) where T : unmanaged
+    // ReadonlySpan -> ReadOnlyRawSpan
+    public unsafe static ReadOnlyRawSpan<T>
+      GetRaw<T>(this ReadOnlySpan<T> span) where T : unmanaged
     {
-        fixed (T* p = span) return new UntypedReadOnlySpan(p, span.Length);
+        fixed (T* p = span) return new ReadOnlyRawSpan<T>(p, span.Length);
     }
 
-    // NativeArray -> UntypedSpan
-    public unsafe static UntypedSpan
-      GetUntypedSpan<T>(this NativeArray<T> array) where T : unmanaged
-        => new UntypedSpan(GetUnsafePtr(array), array.Length);
+    // NativeArray -> RawSpan
+    public unsafe static RawSpan<T>
+      GetRawSpan<T>(this NativeArray<T> array) where T : unmanaged
+        => new RawSpan<T>(GetUnsafePtr(array), array.Length);
 
-    // NativeArray -> UntypedReadOnlySpan
-    public unsafe static UntypedReadOnlySpan
-      GetUntypedReadOnlySpan<T>(this NativeArray<T> array) where T : unmanaged
-        => new UntypedReadOnlySpan(GetUnsafePtr(array), array.Length);
+    // NativeArray -> ReadOnlyRawSpan
+    public unsafe static ReadOnlyRawSpan<T>
+      GetReadOnlyRawSpan<T>(this NativeArray<T> array) where T : unmanaged
+        => new ReadOnlyRawSpan<T>(GetUnsafePtr(array), array.Length);
 }
 
 static class Util

@@ -27,28 +27,27 @@ public struct ChainConfig
 static class ChainBuilder
 {
     // Public entry point
-    public static void Build(in ChainConfig config,
-                             Spline spline,
-                             ReadOnlySpan<ShapeRef> shapes,
-                             Span<ShapeInstance> output)
+    public static void Build
+      (in ChainConfig config,
+       Spline spline,
+       ReadOnlySpan<ShapeRef> shapes,
+       Span<ShapeInstance> output)
     {
         using var tempSpline = new NativeSpline(spline);
-        unsafe { Build_burst(config,
-                             &tempSpline,
-                             shapes.GetUntyped(),
-                             output.GetUntyped()); }
+        unsafe { Build_burst(config, &tempSpline, shapes, output); }
     }
 
     // Bursted entry point
     [BurstCompile]
-    unsafe public static void Build_burst(in ChainConfig cfg,
-                                          in NativeSpline* p_spline,
-                                          in UntypedReadOnlySpan u_shapes,
-                                          in UntypedSpan u_output)
+    unsafe public static void Build_burst
+      (in ChainConfig cfg,
+       in NativeSpline* ptr_spline,
+       in ReadOnlyRawSpan<ShapeRef> raw_shapes,
+       in RawSpan<ShapeInstance> raw_output)
     {
-        var spline = *p_spline;
-        var shapes = u_shapes.GetTyped<ShapeRef>();
-        var output = u_output.GetTyped<ShapeInstance>();
+        var spline = *ptr_spline;
+        var shapes = raw_shapes.GetTyped();
+        var output = raw_output.GetTyped();
 
         var rand = new Random(cfg.Seed);
 
