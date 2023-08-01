@@ -14,7 +14,7 @@ namespace Sketch.MeshKit {
 static class Baker
 {
     // Public method
-    public static void Bake(System.Span<ShapeInstance> instances, Mesh mesh)
+    public static void Bake(System.ReadOnlySpan<ShapeInstance> instances, Mesh mesh)
     {
         // Total vertex / index count
         var (vcount, icount) = (0, 0);
@@ -44,21 +44,21 @@ static class Baker
 
     // Burst accelerated vertex data construction
     [BurstCompile]
-    static void BakeDataBursted(in RawSpan<ShapeInstance> instances,
+    static void BakeDataBursted(in ReadOnlyRawSpan<ShapeInstance> instances,
                                 in RawSpan<float3> vspan,
                                 in RawSpan<float4> cspan,
                                 in RawSpan<uint> ispan)
     {
         var (voffs, ioffs) = (0, 0);
 
-        foreach (var i in instances.GetTyped())
+        foreach (var i in instances.AsReadOnlySpan())
         {
             var (vc, ic) = (i.VertexCount, i.IndexCount);
 
             // Warning: Not sure but this "1" extension is needed.
-            var vslice = vspan.GetTyped(1).Slice(voffs, vc);
-            var cslice = cspan.GetTyped(1).Slice(voffs, vc);
-            var islice = ispan.GetTyped(1).Slice(ioffs, ic);
+            var vslice = vspan.AsSpan(1).Slice(voffs, vc);
+            var cslice = cspan.AsSpan(1).Slice(voffs, vc);
+            var islice = ispan.AsSpan(1).Slice(ioffs, ic);
 
             i.Bake(vslice, cslice, islice, (uint)voffs);
 

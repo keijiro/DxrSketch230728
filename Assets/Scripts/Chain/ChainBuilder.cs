@@ -47,8 +47,8 @@ static class ChainBuilder
        in RawSpan<ShapeInstance> raw_output)
     {
         var spline = *ptr_spline;
-        var shapes = raw_shapes.GetTyped();
-        var output = raw_output.GetTyped();
+        var shapes = raw_shapes.AsReadOnlySpan();
+        var output = raw_output.AsSpan();
 
         var rand = new Random(cfg.Seed);
 
