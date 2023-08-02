@@ -1,6 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine.Rendering;
 using Sketch.Common;
+using System;
 
 using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
 using IndexFormat = UnityEngine.Rendering.IndexFormat;
@@ -14,7 +15,7 @@ namespace Sketch.MeshKit {
 static class Baker
 {
     // Public method
-    public static void Bake(System.ReadOnlySpan<ShapeInstance> instances, Mesh mesh)
+    public static void Bake(ReadOnlySpan<ShapeInstance> instances, Mesh mesh)
     {
         // Total vertex / index count
         var (vcount, icount) = (0, 0);
@@ -24,13 +25,11 @@ static class Baker
             icount += i.IndexCount;
         }
 
-        // Native arrays for vertex / color / index data
-        using var vbuf = Util.NewNativeArray<float3>(vcount);
-        using var cbuf = Util.NewNativeArray<float4>(vcount);
-        using var ibuf = Util.NewNativeArray<uint>(icount);
-
-        // Data construction
-        BakeDataBursted(instances, vbuf, cbuf, ibuf);
+        // Mesh baking
+        using var vbuf = Util.NewTempArray<float3>(vcount);
+        using var cbuf = Util.NewTempArray<float4>(vcount);
+        using var ibuf = Util.NewTempArray<uint>(icount);
+        BakeBursted(instances, vbuf, cbuf, ibuf);
 
         // Mesh object construction
         mesh.Clear();
@@ -42,26 +41,21 @@ static class Baker
         mesh.RecalculateBounds();
     }
 
-    // Burst accelerated vertex data construction
+    // Burst accelerated mesh baking method
     [BurstCompile]
-    static void BakeDataBursted(in ReadOnlyRawSpan<ShapeInstance> instances,
-                                in RawSpan<float3> vspan,
-                                in RawSpan<float4> cspan,
-                                in RawSpan<uint> ispan)
+    static void BakeBursted(in ReadOnlyRawSpan<ShapeInstance> instances,
+                            in RawSpan<float3> vspan,
+                            in RawSpan<float4> cspan,
+                            in RawSpan<uint> ispan)
     {
         var (voffs, ioffs) = (0, 0);
-
         foreach (var i in instances.AsReadOnlySpan())
         {
             var (vc, ic) = (i.VertexCount, i.IndexCount);
-
             // Warning: Not sure but this "1" extension is needed.
-            var vslice = vspan.AsSpan(1).Slice(voffs, vc);
-            var cslice = cspan.AsSpan(1).Slice(voffs, vc);
-            var islice = ispan.AsSpan(1).Slice(ioffs, ic);
-
-            i.Bake(vslice, cslice, islice, (uint)voffs);
-
+            i.Bake(vspan.AsSpan(1).Slice(voffs, vc),
+                   cspan.AsSpan(1).Slice(voffs, vc),
+                   ispan.AsSpan(1).Slice(ioffs, ic), (uint)voffs);
             voffs += vc;
             ioffs += ic;
         }

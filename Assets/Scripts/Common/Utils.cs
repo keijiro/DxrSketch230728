@@ -10,6 +10,11 @@ static class Util
         => new NativeArray<T>(length, Allocator.Persistent,
                               NativeArrayOptions.UninitializedMemory);
 
+    public static NativeArray<T>
+      NewTempArray<T>(int length) where T : unmanaged
+        => new NativeArray<T>(length, Allocator.Temp,
+                              NativeArrayOptions.UninitializedMemory);
+
     public static void DestroyObject(Object o)
     {
         if (o == null) return;
