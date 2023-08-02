@@ -1,10 +1,9 @@
 using Sketch.Common;
 using Sketch.MeshKit;
 using System;
-using UnityEngine.Splines;
 using Unity.Burst;
 using Unity.Mathematics;
-
+using UnityEngine.Splines;
 using Random = Unity.Mathematics.Random;
 
 namespace Sketch {

@@ -1,17 +1,20 @@
 using Sketch.MeshKit;
 using System;
-using Mesh = UnityEngine.Mesh;
+using UnityEngine;
 
 namespace Sketch {
 
+// Helper class for managing an array of shapes and references
 sealed class ShapeCache
 {
+    #region Implicit conversion
+
+    public static implicit operator ReadOnlySpan<ShapeRef>(ShapeCache cache)
+      => cache._refs;
+
+    #endregion
+
     #region Public members
-
-    public static implicit operator ReadOnlySpan<ShapeRef>(ShapeCache self)
-      => self.ShapeRefs;
-
-    public ReadOnlySpan<ShapeRef> ShapeRefs => _refs;
 
     public void Destroy()
       => Release();

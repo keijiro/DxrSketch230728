@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Sketch {
 
+// Utility for managing a "Don't Save" mesh object
 sealed class TempMesh
 {
     Mesh _mesh;
@@ -11,14 +12,8 @@ sealed class TempMesh
 
     public void Destroy()
     {
-        if (_mesh != null)
-        {
-            if (UnityEngine.Application.isPlaying)
-                Object.Destroy(_mesh);
-            else
-                Object.DestroyImmediate(_mesh);
-            _mesh = null;
-        }
+        Common.Util.DestroyObject(_mesh);
+        _mesh = null;
     }
 
     public Mesh Attach(Component parent)

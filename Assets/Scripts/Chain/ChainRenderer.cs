@@ -1,6 +1,6 @@
 using Sketch.MeshKit;
-using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine;
 
 namespace Sketch {
 

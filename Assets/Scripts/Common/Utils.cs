@@ -3,6 +3,7 @@ using Object = UnityEngine.Object;
 
 namespace Sketch.Common {
 
+// Miscellaneous utility methods
 static class Util
 {
     public static NativeArray<T>

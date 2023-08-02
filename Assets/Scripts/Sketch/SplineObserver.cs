@@ -5,6 +5,9 @@ using UnityEditor.Splines;
 
 namespace Sketch {
 
+// SplineObserver provides indirect reference to the "after modified" callback
+// the Spline editor class. We use this class just for encapsulating the
+// dependency on the Editor assembly.
 public static class SplineObserver
 {
     public static event System.Action<Spline> OnModified;

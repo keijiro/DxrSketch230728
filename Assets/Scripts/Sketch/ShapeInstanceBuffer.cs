@@ -3,6 +3,7 @@ using System;
 
 namespace Sketch {
 
+// Shared shape instance array for temporary use
 static class ShapeInstanceBuffer
 {
     static ShapeInstance[] _buffer = new ShapeInstance[1024];
