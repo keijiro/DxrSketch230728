@@ -1,5 +1,6 @@
 using System;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Sketch.Common {
 
@@ -47,8 +48,7 @@ static class RawSpanUtil
     // NativeArray -> raw pointer
     public unsafe static void*
       GetPtr<T>(this NativeArray<T> array) where T : unmanaged
-      => Unity.Collections.LowLevel.Unsafe.NativeArrayUnsafeUtility.
-         GetUnsafePtr(array);
+      => NativeArrayUnsafeUtility.GetUnsafePtr(array);
 }
 
 } // namespace Sketch.Common

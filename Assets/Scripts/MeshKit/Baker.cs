@@ -1,12 +1,9 @@
-using Unity.Mathematics;
-using UnityEngine.Rendering;
 using Sketch.Common;
 using System;
-
-using BurstCompileAttribute = Unity.Burst.BurstCompileAttribute;
-using IndexFormat = UnityEngine.Rendering.IndexFormat;
-using Mesh = UnityEngine.Mesh;
-using MeshTopology = UnityEngine.MeshTopology;
+using Unity.Burst;
+using Unity.Mathematics;
+using UnityEngine.Rendering;
+using UnityEngine;
 
 namespace Sketch.MeshKit {
 

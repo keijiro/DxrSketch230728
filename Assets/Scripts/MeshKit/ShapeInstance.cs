@@ -61,7 +61,8 @@ readonly struct ShapeInstance
 
     void FillUVs(Span<float4> dest)
     {
-        for (var i = 0; i < _shape.Vertices.Length; i++) dest[i] = _color;
+        for (var i = 0; i < _shape.Vertices.Length; i++)
+            dest[i] = _color;
     }
 
     void CopyIndices(Span<uint> dest, uint offs)
