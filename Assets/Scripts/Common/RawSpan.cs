@@ -41,30 +41,6 @@ public unsafe readonly ref struct ReadOnlyRawSpan<T> where T : unmanaged
       => new ReadOnlyRawSpan<T>(RawSpanUtil.GetPtr(array), array.Length);
 }
 
-// Extension method
-public static class SpanExtensions
-{
-    // Span -> RawSpan
-    public unsafe static RawSpan<T>
-      AsRawSpan<T>(this Span<T> span) where T : unmanaged
-      { fixed (T* p = span) return new RawSpan<T>(p, span.Length); }
-
-    // ReadonlySpan -> ReadOnlyRawSpan
-    public unsafe static ReadOnlyRawSpan<T>
-      AsReadOnlyRawSpan<T>(this ReadOnlySpan<T> span) where T : unmanaged
-      { fixed (T* p = span) return new ReadOnlyRawSpan<T>(p, span.Length); }
-
-    // NativeArray -> RawSpan
-    public unsafe static RawSpan<T>
-      AsRawSpan<T>(this NativeArray<T> array) where T : unmanaged
-      => new RawSpan<T>(RawSpanUtil.GetPtr(array), array.Length);
-
-    // NativeArray -> ReadOnlyRawSpan
-    public unsafe static ReadOnlyRawSpan<T>
-      AsReadOnlyRawSpan<T>(this NativeArray<T> array) where T : unmanaged
-      => new ReadOnlyRawSpan<T>(RawSpanUtil.GetPtr(array), array.Length);
-}
-
 // Utility methods for internal-use
 static class RawSpanUtil
 {
