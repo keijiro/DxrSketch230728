@@ -54,8 +54,10 @@ public sealed class ChainRenderer : MonoBehaviour
         if (Shapes == null || Shapes.Length == 0) return;
         _shapeCache.Update(Shapes);
 
+        var time = Time.time;
+
         var instances = ShapeInstanceBuffer.Get(Config.InstanceCount);
-        ChainBuilder.Build(Config, Spline.Spline, _shapeCache, instances);
+        ChainBuilder.Build(time, Config, Spline.Spline, _shapeCache, instances);
         Baker.Bake(instances, _mesh.Attach(this));
     }
 

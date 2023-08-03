@@ -4,6 +4,7 @@ using Sketch.MeshKit;
 using System;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Splines;
 using Random = Unity.Mathematics.Random;
 
@@ -13,15 +14,35 @@ namespace Sketch {
 [Serializable]
 public struct ChainConfig
 {
+    public float Fade;
+    public float Delay;
+    public float Lifetime;
+
+    [Tooltip("Total number of instances")]
     public int InstanceCount;
+
+    [Tooltip("Random displacement from curve")]
     public float Displacement;
+
+    [Tooltip("Random bloom angle (Min, Max)")]
+    public float2 Bloom;
+
+    [Tooltip("Random instance scale (Min, Max, Exp)")]
+    public float3 Scale;
+
+    [Tooltip("Random number seed")]
     public uint Seed;
 
     // Default configuration
     public static ChainConfig Default()
       => new ChainConfig()
-        { InstanceCount = 100,
+        { Delay = 1,
+          Fade = 1,
+          Lifetime = 5,
+          InstanceCount = 100,
           Displacement = 0.1f,
+          Bloom = math.float2(0.1f, 0.2f),
+          Scale = math.float3(0.2f, 1, 1.5f),
           Seed = 1 };
 }
 
@@ -31,19 +52,21 @@ static class ChainBuilder
 {
     // Public entry point
     public static void Build
-      (in ChainConfig config,
+      (float time,
+       in ChainConfig config,
        Spline spline,
        ReadOnlySpan<ShapeRef> shapes,
        Span<ShapeInstance> output)
     {
         using var tempSpline = new NativeSpline(spline);
-        unsafe { Build_burst(config, &tempSpline, shapes, output); }
+        unsafe { Build_burst(time, config, &tempSpline, shapes, output); }
     }
 
     // Bursted entry point
     [BurstCompile]
     unsafe public static void Build_burst
-      (in ChainConfig cfg,
+      (float time,
+       in ChainConfig cfg,
        in NativeSpline* ptr_spline,
        in ReadOnlyRawSpan<ShapeRef> raw_shapes,
        in RawSpan<ShapeInstance> raw_output)
@@ -56,26 +79,34 @@ static class ChainBuilder
 
         for (var i = 0; i < cfg.InstanceCount; i++)
         {
-            var t = (float)i / cfg.InstanceCount;
+            var param = (float)i / cfg.InstanceCount;
 
             // Spline point sample
             float3 pos, tan, up;
-            spline.Evaluate(t, out pos, out tan, out up);
+            spline.Evaluate(param, out pos, out tan, out up);
 
             // Random rotation
             var rz = rand.NextFloat(math.PI * 2);
-            var rx = rand.NextFloat(0.2f, 0.4f) * math.PI;
+            var rx = rand.NextFloat(cfg.Bloom.x, cfg.Bloom.y) * math.PI / 2;
+
+            var t = time - param * cfg.Delay;
+            var fade = math.saturate(t / cfg.Fade);
+            rz += t + fade * math.PI * 2;
+            //rz += cfg.Time - t * cfg.Delay;
 
             var rot = quaternion.LookRotation(tan, up);
             rot = math.mul(rot, quaternion.RotateZ(rz));
             rot = math.mul(rot, quaternion.RotateX(rx));
 
-            var dis = math.mul(rot, math.float3(0, 0, 1));
-            pos += dis * rand.NextFloat(cfg.Displacement);
+            //var edge = 1 - math.saturate((t - cfg.Edge.x) / (cfg.Edge.y - cfg.Edge.x));
 
             // Random scale
-            var scale = math.pow(rand.NextFloat(), 1.5f);
-            scale = math.lerp(0.2f, 1, scale);
+            var scale = math.pow(rand.NextFloat(), cfg.Scale.z);
+            scale = math.lerp(cfg.Scale.x, cfg.Scale.y, scale);
+            scale *= fade;
+
+            var dis = math.mul(rot, math.float3(0, 0, 1));
+            pos += dis * rand.NextFloat(cfg.Displacement);
 
             // Random shape
             var shape = shapes[rand.NextInt(shapes.Length)];
