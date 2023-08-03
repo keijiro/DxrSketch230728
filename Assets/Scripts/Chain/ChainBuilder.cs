@@ -1,3 +1,4 @@
+using Klak.Math;
 using Sketch.Common;
 using Sketch.MeshKit;
 using System;
@@ -13,12 +14,14 @@ namespace Sketch {
 public struct ChainConfig
 {
     public int InstanceCount;
+    public float Displacement;
     public uint Seed;
 
     // Default configuration
     public static ChainConfig Default()
       => new ChainConfig()
         { InstanceCount = 100,
+          Displacement = 0.1f,
           Seed = 1 };
 }
 
@@ -66,6 +69,9 @@ static class ChainBuilder
             var rot = quaternion.LookRotation(tan, up);
             rot = math.mul(rot, quaternion.RotateZ(rz));
             rot = math.mul(rot, quaternion.RotateX(rx));
+
+            var dis = math.mul(rot, math.float3(0, 0, 1));
+            pos += dis * rand.NextFloat(cfg.Displacement);
 
             // Random scale
             var scale = math.pow(rand.NextFloat(), 1.5f);
