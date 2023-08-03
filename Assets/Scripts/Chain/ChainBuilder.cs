@@ -14,7 +14,7 @@ namespace Sketch {
 [Serializable]
 public struct ChainConfig
 {
-    public float Fade;
+    public float2 Fade;
     public float Delay;
     public float Lifetime;
 
@@ -37,7 +37,7 @@ public struct ChainConfig
     public static ChainConfig Default()
       => new ChainConfig()
         { Delay = 1,
-          Fade = 1,
+          Fade = math.float2(0.5f, 1),
           Lifetime = 5,
           InstanceCount = 100,
           Displacement = 0.1f,
@@ -90,15 +90,13 @@ static class ChainBuilder
             var rx = rand.NextFloat(cfg.Bloom.x, cfg.Bloom.y) * math.PI / 2;
 
             var t = time - param * cfg.Delay;
-            var fade = math.saturate(t / cfg.Fade);
+            var fade_end = rand.NextFloat(cfg.Fade.x, cfg.Fade.y);
+            var fade = math.smoothstep(0, fade_end, t);
             rz += t + fade * math.PI * 2;
-            //rz += cfg.Time - t * cfg.Delay;
 
             var rot = quaternion.LookRotation(tan, up);
             rot = math.mul(rot, quaternion.RotateZ(rz));
             rot = math.mul(rot, quaternion.RotateX(rx));
-
-            //var edge = 1 - math.saturate((t - cfg.Edge.x) / (cfg.Edge.y - cfg.Edge.x));
 
             // Random scale
             var scale = math.pow(rand.NextFloat(), cfg.Scale.z);

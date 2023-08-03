@@ -1,11 +1,12 @@
 using Sketch.MeshKit;
 using UnityEngine.Splines;
+using UnityEngine.Timeline;
 using UnityEngine;
 
 namespace Sketch {
 
 [ExecuteInEditMode]
-public sealed class ChainRenderer : MonoBehaviour
+public sealed class ChainRenderer : MonoBehaviour, ITimeControl
 {
     #region Editable attributes
 
@@ -37,6 +38,15 @@ public sealed class ChainRenderer : MonoBehaviour
 
     #endregion
 
+    #region ITimeControl implementation
+
+    float _time;
+    public void OnControlTimeStart() {}
+    public void OnControlTimeStop() {}
+    public void SetTime(double time) => _time = (float)time;
+
+    #endregion
+
     #region Private members
 
     ShapeCache _shapeCache = new ShapeCache();
@@ -54,10 +64,8 @@ public sealed class ChainRenderer : MonoBehaviour
         if (Shapes == null || Shapes.Length == 0) return;
         _shapeCache.Update(Shapes);
 
-        var time = Time.time;
-
         var instances = ShapeInstanceBuffer.Get(Config.InstanceCount);
-        ChainBuilder.Build(time, Config, Spline.Spline, _shapeCache, instances);
+        ChainBuilder.Build(_time, Config, Spline.Spline, _shapeCache, instances);
         Baker.Bake(instances, _mesh.Attach(this));
     }
 
