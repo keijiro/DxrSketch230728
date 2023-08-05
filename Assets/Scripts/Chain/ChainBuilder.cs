@@ -14,23 +14,28 @@ namespace Sketch {
 [Serializable]
 public struct ChainConfig
 {
+    [Tooltip("The fading duration (min, max)")]
     public float2 Fade;
+
+    [Tooltip("The delay between the head/tail")]
     public float Delay;
+
+    [Tooltip("The duration of the animation")]
     public float Lifetime;
 
-    [Tooltip("Total number of instances")]
+    [Tooltip("The total number of the instances")]
     public int InstanceCount;
 
-    [Tooltip("Random displacement from curve")]
+    [Tooltip("The random displacement from the base curve")]
     public float Displacement;
 
-    [Tooltip("Random bloom angle (Min, Max)")]
+    [Tooltip("The bloom angle (min, max)")]
     public float2 Bloom;
 
-    [Tooltip("Random instance scale (Min, Max, Exp)")]
+    [Tooltip("The instance scale (min, max, exp)")]
     public float3 Scale;
 
-    [Tooltip("Random number seed")]
+    [Tooltip("The random number seed")]
     public uint Seed;
 
     // Default configuration
