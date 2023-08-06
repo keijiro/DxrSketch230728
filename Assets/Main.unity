@@ -209,7 +209,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 29036649}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
   m_Name: 
@@ -222,9 +222,9 @@ MonoBehaviour:
     x: 3
     y: 3
     z: 3
-  frequency: 0.1
-  octaves: 1
-  seed: 1
+  frequency: 0.2
+  octaves: 2
+  seed: 307
 --- !u!1 &206535569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1127,25 +1127,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Spline>k__BackingField: {fileID: 1638020559}
   <Config>k__BackingField:
-    Fade:
-      x: 0.5
-      y: 1
-    Delay: 1
     Lifetime: 5
-    InstanceCount: 200
-    Displacement: 0.31
+    Delay: 1
+    Fade:
+      x: 0.7
+      y: 1
+    Spin:
+      x: 3
+      y: 1
+      z: 3
+    InstanceCount: 400
+    Displacement: 0.3
     Bloom:
-      x: 0.28
-      y: 0.91
+      x: 0.4
+      y: 1.2
     Scale:
       x: 0.2
-      y: 0.78
-      z: 1.34
-    Seed: 1
+      y: 1
+      z: 2.6
+    Seed: 100
   <Shapes>k__BackingField:
   - {fileID: 4702925393065980420, guid: bd7d57e92286b3242bedcf3b181254cf, type: 3}
   - {fileID: 4702925393065980420, guid: dacb1ee807986724bbdf5c333266cd31, type: 3}
   - {fileID: 4702925393065980420, guid: 4772df86f62961c4e9b94a800f097a06, type: 3}
+  <Time>k__BackingField: 0
 --- !u!23 &1638020556
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1666,6 +1671,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1644190567}
   - component: {fileID: 1644190568}
+  - component: {fileID: 1644190569}
   m_Layer: 0
   m_Name: Camera Pivot
   m_TagString: Untagged
@@ -1682,7 +1688,7 @@ Transform:
   m_GameObject: {fileID: 1644190566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.3, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1696,7 +1702,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1644190566}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
   m_Name: 
@@ -1712,6 +1718,26 @@ MonoBehaviour:
   frequency: 0.1
   octaves: 2
   seed: 1
+--- !u!114 &1644190569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644190566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b3dd156c03a80f48913a83361c6d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity:
+    x: 0
+    y: 0.1
+    z: 1
+  angularVelocity:
+    x: 0
+    y: 20
+    z: 0
 --- !u!1 &1867155516
 GameObject:
   m_ObjectHideFlags: 0

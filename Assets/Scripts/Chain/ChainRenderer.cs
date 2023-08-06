@@ -1,4 +1,5 @@
 using Sketch.MeshKit;
+using UnityEngine.Playables;
 using UnityEngine.Splines;
 using UnityEngine.Timeline;
 using UnityEngine;
@@ -6,7 +7,8 @@ using UnityEngine;
 namespace Sketch {
 
 [ExecuteInEditMode]
-public sealed class ChainRenderer : MonoBehaviour, ITimeControl
+public sealed class ChainRenderer
+  : MonoBehaviour, ITimeControl, IPropertyPreview
 {
     #region Editable attributes
 
@@ -18,6 +20,9 @@ public sealed class ChainRenderer : MonoBehaviour, ITimeControl
 
     [field:SerializeField]
     public Mesh[] Shapes { get; set; }
+
+    [field:SerializeField]
+    public float Time { get; set; }
 
     #endregion
 
@@ -40,10 +45,12 @@ public sealed class ChainRenderer : MonoBehaviour, ITimeControl
 
     #region ITimeControl implementation
 
-    float _time;
     public void OnControlTimeStart() {}
     public void OnControlTimeStop() {}
-    public void SetTime(double time) => _time = (float)time;
+    public void SetTime(double time) => Time = (float)time;
+
+    public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+      => driver.AddFromName<ChainRenderer>(gameObject, "<Time>k__BackingField");
 
     #endregion
 
@@ -65,7 +72,7 @@ public sealed class ChainRenderer : MonoBehaviour, ITimeControl
         _shapeCache.Update(Shapes);
 
         var instances = ShapeInstanceBuffer.Get(Config.InstanceCount);
-        ChainBuilder.Build(_time, Config, Spline.Spline, _shapeCache, instances);
+        ChainBuilder.Build(Time, Config, Spline.Spline, _shapeCache, instances);
         Baker.Bake(instances, _mesh.Attach(this));
     }
 

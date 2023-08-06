@@ -14,14 +14,17 @@ namespace Sketch {
 [Serializable]
 public struct ChainConfig
 {
+    [Tooltip("The duration of the animation")]
+    public float Lifetime;
+
+    [Tooltip("The delay time between the head/tail")]
+    public float Delay;
+
     [Tooltip("The fading duration (min, max)")]
     public float2 Fade;
 
-    [Tooltip("The delay between the head/tail")]
-    public float Delay;
-
-    [Tooltip("The duration of the animation")]
-    public float Lifetime;
+    [Tooltip("The angular speed (in, mid, out)")]
+    public float3 Spin;
 
     [Tooltip("The total number of the instances")]
     public int InstanceCount;
@@ -41,9 +44,10 @@ public struct ChainConfig
     // Default configuration
     public static ChainConfig Default()
       => new ChainConfig()
-        { Delay = 1,
+        { Lifetime = 5,
+          Delay = 1,
           Fade = math.float2(0.5f, 1),
-          Lifetime = 5,
+          Spin = 1,
           InstanceCount = 100,
           Displacement = 0.1f,
           Bloom = math.float2(0.1f, 0.2f),
@@ -95,9 +99,10 @@ static class ChainBuilder
             var rx = rand.NextFloat(cfg.Bloom.x, cfg.Bloom.y) * math.PI / 2;
 
             var t = time - param * cfg.Delay;
-            var fade_end = rand.NextFloat(cfg.Fade.x, cfg.Fade.y);
-            var fade = math.smoothstep(0, fade_end, t);
-            rz += t + fade * math.PI * 2;
+            var fade_dur = rand.NextFloat(cfg.Fade.x, cfg.Fade.y);
+            var fade1 = math.smoothstep(0, fade_dur, t);
+            var fade2 = math.smoothstep(cfg.Lifetime - fade_dur, cfg.Lifetime, t);
+            rz += math.dot(cfg.Spin, math.float3(fade1, t, fade2));
 
             var rot = quaternion.LookRotation(tan, up);
             rot = math.mul(rot, quaternion.RotateZ(rz));
@@ -106,7 +111,7 @@ static class ChainBuilder
             // Random scale
             var scale = math.pow(rand.NextFloat(), cfg.Scale.z);
             scale = math.lerp(cfg.Scale.x, cfg.Scale.y, scale);
-            scale *= fade;
+            scale *= (fade1 - fade2);
 
             var dis = math.mul(rot, math.float3(0, 0, 1));
             pos += dis * rand.NextFloat(cfg.Displacement);
