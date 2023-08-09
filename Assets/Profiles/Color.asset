@@ -31,7 +31,7 @@ MonoBehaviour:
   m_Name: Color
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 2728460633460454560}
+  - {fileID: 5823677310010857612}
   - {fileID: 1881801207089344013}
 --- !u!114 &1881801207089344013
 MonoBehaviour:
@@ -45,13 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b8bcdf71d7fafa419fca1ed162f5fc9, type: 3}
   m_Name: ColorAdjustments
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   postExposure:
     m_OverrideState: 1
     m_Value: 0
   contrast:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 4
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -61,7 +61,7 @@ MonoBehaviour:
   saturation:
     m_OverrideState: 1
     m_Value: 20
---- !u!114 &2728460633460454560
+--- !u!114 &5823677310010857612
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,13 +73,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da5ab44aadfb1804db5fd470983ac1b8, type: 3}
   m_Name: LiftGammaGain
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   lift:
     m_OverrideState: 1
-    m_Value: {x: 0.94, y: 0.994, z: 1, w: -0.03424658}
+    m_Value: {x: 0.98416, y: 1, z: 0.99629456, w: 0}
   gamma:
-    m_OverrideState: 1
-    m_Value: {x: 1, y: 0.90999997, z: 0.96400005, w: 0.03424658}
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 0.92, y: 1, z: 0.97333336, w: -0.13698632}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.10591351}
