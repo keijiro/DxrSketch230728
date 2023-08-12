@@ -15,10 +15,9 @@ public struct GrassConfig
 {
     public int InstanceCount;
     public float SpawnRadius;
-    public int BandsPerInstance;
-    public int PointsPerRing;
-    public float RingRadius;
-    public float Height;
+    public float BladeWidth;
+    public float BladeHeight;
+    public int Subdivision;
     public uint Seed;
 
     // Default configuration
@@ -26,10 +25,9 @@ public struct GrassConfig
       => new GrassConfig()
         { InstanceCount = 100,
           SpawnRadius = 10,
-          BandsPerInstance = 10,
-          PointsPerRing = 4,
-          RingRadius = 0.1f,
-          Height = 1,
+          BladeWidth = 0.01f,
+          BladeHeight = 0.5f,
+          Subdivision = 10,
           Seed = 1 };
 }
 
@@ -43,11 +41,11 @@ static class GrassBuilder
        in GrassConfig cfg,
        Mesh mesh)
     {
-        var fcount = cfg.InstanceCount *
-          cfg.BandsPerInstance * cfg.PointsPerRing;
+        var vcount = cfg.InstanceCount * (cfg.Subdivision + 1) * 2;
+        var icount = cfg.InstanceCount * cfg.Subdivision * 6;
 
-        using var vbuf = Util.NewTempArray<float3>(fcount * 4);
-        using var ibuf = Util.NewTempArray<uint>(fcount * 6);
+        using var vbuf = Util.NewTempArray<float3>(vcount);
+        using var ibuf = Util.NewTempArray<uint>(icount);
 
         BakeVertices(cfg, vbuf);
         BakeIndices(cfg, ibuf);
@@ -68,29 +66,37 @@ static class GrassBuilder
         var (offs, idx) = (0, 0u);
 
         var rand = new Random(cfg.Seed);
-        var bandHeight = cfg.Height / (cfg.BandsPerInstance * 2);
 
         for (var i = 0; i < cfg.InstanceCount; i++)
         {
             var p0 = rand.NextFloat2OnDisk() * cfg.SpawnRadius;
 
-            for (var j = 0; j < cfg.BandsPerInstance; j++)
+            var str = math.float2(0, 0);
+
+            var rot = rand.NextFloat(0.03f, 0.15f);
+            var mrot = math.float2x2(math.cos(rot), -math.sin(rot), math.sin(rot), math.cos(rot));
+            var sss = math.float2(cfg.BladeHeight / cfg.Subdivision * rand.NextFloat(0.75f, 1.4f), 0);
+
+            var tr = float4x4.TRS(math.float3(p0, 0).xzy,
+                                  quaternion.RotateY(rand.NextFloat(-0.2f, 0.2f)), 1);
+
+            for (var j = 0; j < cfg.Subdivision + 1; j++)
             {
-                for (var k = 0; k < cfg.PointsPerRing; k++)
-                {
-                    var rad = cfg.RingRadius *
-                      (1 - math.smoothstep(0, cfg.BandsPerInstance * 2, j));
-                    var phi = math.PI * 2 * k / cfg.PointsPerRing;
-                    var x = math.cos(phi) * rad + p0.x;
-                    var z = math.sin(phi) * rad + p0.y;
-                    var y1 = bandHeight * j * 2;
-                    var y2 = y1 + bandHeight;
-                    var v1 = math.float3(x, y1, z);
-                    var v2 = math.float3(x, y2, z);
-                    vspan[offs + 0] = vspan[offs + 2] = v1;
-                    vspan[offs + 1] = vspan[offs + 3] = v2;
-                    offs += 4;
-                }
+                var p = (float)j / cfg.Subdivision;
+
+                //var p2 = p * p * p * p * p;
+                var ext = cfg.BladeWidth * 0.5f * (1 - 0.4f * p);
+
+                var x0 = p0.x*0 - ext;
+                var x1 = p0.x*0 + ext;
+
+                str += sss;
+                sss = math.mul(mrot, sss);
+
+                //vspan[offs++] = math.float3(x0, str.x, p0.y + str.y);
+                //vspan[offs++] = math.float3(x1, str.x, p0.y + str.y);
+                vspan[offs++] = math.mul(tr, math.float4(-ext, str, 1)).xyz;
+                vspan[offs++] = math.mul(tr, math.float4(+ext, str, 1)).xyz;
             }
         }
     }
@@ -100,37 +106,23 @@ static class GrassBuilder
     {
         var ispan = raw_ispan.AsSpan();
         var (offs, idx) = (0, 0u);
-        var wrap = (uint)(cfg.PointsPerRing * 4 - 2);
 
         for (var i = 0; i < cfg.InstanceCount; i++)
         {
-            for (var j = 0; j < cfg.BandsPerInstance; j++)
+            for (var j = 0; j < cfg.Subdivision; j++)
             {
-                ispan[offs++] = idx + wrap;
-                ispan[offs++] = idx + wrap + 1;
                 ispan[offs++] = idx;
-
-                ispan[offs++] = idx;
-                ispan[offs++] = idx + wrap + 1;
                 ispan[offs++] = idx + 1;
+                ispan[offs++] = idx + 2;
 
-                idx += 2;
-
-                for (var k = 1; k < cfg.PointsPerRing; k++)
-                {
-                    ispan[offs++] = idx;
-                    ispan[offs++] = idx + 1;
-                    ispan[offs++] = idx + 2;
-
-                    ispan[offs++] = idx + 2;
-                    ispan[offs++] = idx + 1;
-                    ispan[offs++] = idx + 3;
-
-                    idx += 4;
-                }
+                ispan[offs++] = idx + 2;
+                ispan[offs++] = idx + 1;
+                ispan[offs++] = idx + 3;
 
                 idx += 2;
             }
+
+            idx += 2;
         }
     }
 }
