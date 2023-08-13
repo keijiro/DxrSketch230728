@@ -74,9 +74,12 @@ static class StageBuilder
                 var y2 = noise.snoise(np * 4);
                 y *= y2 * y2 * y2 * y2 * 6;
 
-                var pos = math.float3(x, y, z);
                 var rot = quaternion.RotateZ(0.4f);
                 var scale = cfg.InstanceSize;
+
+                var vy = math.mul(rot, math.float3(0, y, 0));
+
+                var pos = math.float3(x, 0, z) + vy;
 
                 // Random shape
                 var shape = shapes[rand.NextInt(shapes.Length)];
