@@ -61,7 +61,8 @@ public sealed class StageRenderer
         _shapeCache.Update(Shapes);
 
         var instances = ShapeInstanceBuffer.Get(Config.TotalInstanceCount);
-        StageBuilder.Build(Time, Config, _shapeCache, instances);
+        //StageBuilder.Build(Time, Config, _shapeCache, instances);
+        StageBuilder.Build(UnityEngine.Time.time, Config, _shapeCache, instances);
         Baker.Bake(instances, _mesh.Attach(this));
     }
 

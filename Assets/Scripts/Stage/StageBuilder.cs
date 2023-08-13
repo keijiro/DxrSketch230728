@@ -13,7 +13,7 @@ namespace Sketch {
 [Serializable]
 public struct StageConfig
 {
-    public int2 CellCounts;
+    public uint2 CellCounts;
     public float CellSize;
     public float InstanceSize;
 
@@ -21,7 +21,7 @@ public struct StageConfig
     public uint Seed;
 
     public int TotalInstanceCount
-      => CellCounts.x * CellCounts.y;
+      => (int)(CellCounts.x * CellCounts.y);
 
     // Default configuration
     public static StageConfig Default()
@@ -59,25 +59,34 @@ static class StageBuilder
         var rand = new Random(cfg.Seed);
 
         var idx = 0;
-        for (var i = 0; i < cfg.CellCounts.y; i++)
+        for (var i = 0; i < cfg.CellCounts.x; i++)
         {
-            for (var j = 0; j < cfg.CellCounts.x; j++)
+            for (var j = 0; j < cfg.CellCounts.y; j++)
             {
-                var x = (i - (cfg.CellCounts.x - 0.5f) * 0.5f) * cfg.CellSize;
-                var z = (j - (cfg.CellCounts.y - 0.5f) * 0.5f) * cfg.CellSize;
+                var x = (i - (cfg.CellCounts.x - 1) * 0.5f) * cfg.CellSize;
+                var z = (j - (cfg.CellCounts.y - 1) * 0.5f) * cfg.CellSize;
 
-                var pos = math.float3(x, 0, z);
-                var rot = quaternion.identity;
+                var o1 = math.float2(time * 0.2f, 0);
+                var np = math.float2(x, z) * 0.8f;
+                var y = noise.snoise(np + o1) * 0.2f;
+                y = math.max(0, y);
+
+                var y2 = noise.snoise(np * 4);
+                y *= y2 * y2 * y2 * y2 * 6;
+
+                var pos = math.float3(x, y, z);
+                var rot = quaternion.RotateZ(0.4f);
                 var scale = cfg.InstanceSize;
 
                 // Random shape
                 var shape = shapes[rand.NextInt(shapes.Length)];
 
-                output[idx++] = new MeshKit.ShapeInstance(position: pos,
-                                                          rotation: rot,
-                                                          scale: scale,
-                                                          color: 1,
-                                                          shape: shape);
+                output[idx++] = new MeshKit.ShapeInstance
+                  (position: pos,
+                   rotation: rot,
+                   scale: scale,
+                   color: 1,
+                   shape: shape);
             }
         }
     }
