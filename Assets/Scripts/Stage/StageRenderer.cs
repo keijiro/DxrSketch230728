@@ -55,8 +55,6 @@ public sealed class StageRenderer
     {
         if (!forceUpdate) return;
 
-        _mesh.Clear();
-
         if (Shapes == null || Shapes.Length == 0) return;
         _shapeCache.Update(Shapes);
 
