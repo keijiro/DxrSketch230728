@@ -926,7 +926,9 @@ MonoBehaviour:
     CellSize: 0.1
     InstanceSize: 0.1
     Seed: 1
-  <Prefab>k__BackingField: {fileID: 463696440080611410, guid: a0d0c0ea3b2739148b1fc977b7cc8606, type: 3}
+  <Meshes>k__BackingField:
+  - {fileID: -8670151273213183110, guid: 8b39dc7a0bf591f49aeddfed7436ca8f, type: 3}
+  <Material>k__BackingField: {fileID: 2100000, guid: 1bdda133420077149896e59a592f6010, type: 2}
   <Time>k__BackingField: 0
 --- !u!1 &926961476
 GameObject:
