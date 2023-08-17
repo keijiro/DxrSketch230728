@@ -1,11 +1,37 @@
 using Sketch.MeshKit;
+using System.Linq;
+using Unity.Burst;
+using Unity.Mathematics;
+using UnityEngine.Jobs;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine;
 
 namespace Sketch {
 
-[ExecuteInEditMode]
+// Configuration struct
+[System.Serializable]
+public struct StageConfig
+{
+    public uint2 CellCounts;
+    public float CellSize;
+    public float InstanceSize;
+
+    [Tooltip("The random number seed")]
+    public uint Seed;
+
+    public int TotalInstanceCount
+      => (int)(CellCounts.x * CellCounts.y);
+
+    // Default configuration
+    public static StageConfig Default()
+      => new StageConfig()
+        { CellCounts = 10,
+          CellSize = 0.5f,
+          InstanceSize = 0.5f,
+          Seed = 1 };
+}
+
 public sealed class StageRenderer
   : MonoBehaviour, ITimeControl, IPropertyPreview
 {
@@ -15,7 +41,7 @@ public sealed class StageRenderer
     public StageConfig Config { get; set; } = StageConfig.Default();
 
     [field:SerializeField]
-    public Mesh[] Shapes { get; set; }
+    public GameObject Prefab { get; set; }
 
     [field:SerializeField]
     public float Time { get; set; }
@@ -24,21 +50,49 @@ public sealed class StageRenderer
 
     #region MonoBehaviour implementation
 
-    void OnDisable()
+    void Start()
     {
-        _shapeCache.Destroy();
-        _mesh.Destroy();
+        var sheet = new MaterialPropertyBlock();
+        _instances = new GameObject[TotalInstanceCount];
+
+        for (var i = 0; i < TotalInstanceCount; i++)
+        {
+            var go = Instantiate(Prefab);
+            go.hideFlags = HideFlags.HideAndDontSave;
+            go.GetComponent<Renderer>().SetPropertyBlock(sheet);
+            go.transform.parent = transform;
+            _instances[i] = go;
+        }
+
+        _xforms = new TransformAccessArray
+          (_instances.Select(go => go.transform).ToArray());
+        UpdateXforms();
     }
 
     void Update()
-      => ConstructMesh(true);
+      => UpdateXforms();
+
+    void LateUpdate()
+    {
+        if (Application.isPlaying && !_isTimeControlled)
+            Time += UnityEngine.Time.deltaTime;
+    }
+
+    void OnDestroy()
+    {
+        foreach (var go in _instances) Destroy(go);
+        _instances = null;
+        _xforms.Dispose();
+    }
 
     #endregion
 
     #region ITimeControl implementation
 
-    public void OnControlTimeStart() {}
-    public void OnControlTimeStop() {}
+    bool _isTimeControlled;
+
+    public void OnControlTimeStart() => _isTimeControlled = true;
+    public void OnControlTimeStop() => _isTimeControlled = false;
     public void SetTime(double time) => Time = (float)time;
 
     public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
@@ -48,23 +102,52 @@ public sealed class StageRenderer
 
     #region Private members
 
-    ShapeCache _shapeCache = new ShapeCache();
-    TempMesh _mesh = new TempMesh();
+    GameObject[] _instances;
+    TransformAccessArray _xforms;
 
-    void ConstructMesh(bool forceUpdate)
-    {
-        if (!forceUpdate) return;
+    uint TotalInstanceCount
+      => Config.CellCounts.x * Config.CellCounts.y;
 
-        if (Shapes == null || Shapes.Length == 0) return;
-        _shapeCache.Update(Shapes);
-
-        var instances = ShapeInstanceBuffer.Get(Config.TotalInstanceCount);
-        //StageBuilder.Build(Time, Config, _shapeCache, instances);
-        StageBuilder.Build(UnityEngine.Time.time, Config, _shapeCache, instances);
-        Baker.Bake(instances, _mesh.Attach(this));
-    }
+    void UpdateXforms()
+      => new StageXformJob(){ Time = Time, Config = Config }.Schedule(_xforms);
 
     #endregion
+}
+
+[BurstCompile]
+struct StageXformJob : IJobParallelForTransform
+{
+    public float Time;
+    public StageConfig Config;
+
+    [BurstCompile]
+    public void Execute(int index, TransformAccess transform)
+    {
+        var i = index % Config.CellCounts.x;
+        var j = index / Config.CellCounts.x;
+
+        var x = (i - (Config.CellCounts.x - 1) * 0.5f) * Config.CellSize;
+        var z = (j - (Config.CellCounts.y - 1) * 0.5f) * Config.CellSize;
+
+        var o1 = math.float2(Time * 0.2f, 0);
+        var np = math.float2(x, z) * 0.8f;
+        var y = noise.snoise(np + o1) * 0.2f;
+        y = math.max(0, y);
+
+        var y2 = noise.snoise(np * 4);
+        y *= y2 * y2 * y2 * y2 * 6;
+
+        var rot = quaternion.RotateZ(0.4f);
+        var scale = Config.InstanceSize;
+
+        var vy = math.mul(rot, math.float3(0, y, 0));
+
+        var pos = math.float3(x, 0, z) + vy;
+
+        transform.localPosition = pos;
+        transform.localRotation = rot;
+        transform.localScale = (float3)0.1f;
+    }
 }
 
 } // namespace Sketch
