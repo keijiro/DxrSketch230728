@@ -27,13 +27,13 @@ public sealed class StageRenderer
 
     #region Private members
 
-    NodePool _pool;
+    InstancePool _pool;
 
     uint TotalInstanceCount
       => Config.CellCounts.x * Config.CellCounts.y;
 
     void UpdateXforms()
-      => new StageXformJob()
+      => new StageUpdateJob()
            { Config = Config, Time = Time,
              Parent = transform.localToWorldMatrix }.Schedule(_pool.Xforms);
 
@@ -58,9 +58,9 @@ public sealed class StageRenderer
 
     void Update()
     {
-        if (_pool == null) _pool = new NodePool();
+        if (_pool == null) _pool = new InstancePool();
         _pool.Capacity = (int)TotalInstanceCount;
-        _pool.Shapes = Meshes;
+        _pool.Meshes = Meshes;
         _pool.Material = Material;
         _pool.RandomSeed = Config.Seed;
         UpdateXforms();

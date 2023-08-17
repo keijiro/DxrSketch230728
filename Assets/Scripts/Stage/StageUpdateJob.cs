@@ -29,7 +29,7 @@ public struct StageConfig
 }
 
 [BurstCompile]
-struct StageXformJob : IJobParallelForTransform
+struct StageUpdateJob : IJobParallelForTransform
 {
     public float Time;
     public StageConfig Config;

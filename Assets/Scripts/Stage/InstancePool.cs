@@ -9,15 +9,15 @@ using Random = Unity.Mathematics.Random;
 
 namespace Sketch {
 
-public class NodePool : IDisposable
+public class InstancePool : IDisposable
 {
     #region Public properties
 
     public int Capacity
       { get => _instances.Count; set => ChangeCapacity(value); }
 
-    public ReadOnlySpan<Mesh> Shapes
-      { get => _shapes; set => ResetShapes(value); }
+    public ReadOnlySpan<Mesh> Meshes
+      { get => _meshes; set => ResetMeshes(value); }
 
     public Material Material
       { get => _material; set => ResetMaterial(value); }
@@ -31,7 +31,7 @@ public class NodePool : IDisposable
 
     #region Public methods
 
-    public NodePool()
+    public InstancePool()
       => _mpblock = new MaterialPropertyBlock();
 
     public void Dispose()
@@ -41,12 +41,12 @@ public class NodePool : IDisposable
 
     #region Private members
 
-    static readonly Type[] NodeComponents =
+    static readonly Type[] InstanceComponents =
       { typeof(MeshFilter), typeof(MeshRenderer) };
 
     List<GameObject> _instances = new List<GameObject>();
 
-    Mesh[] _shapes = new Mesh[] { null };
+    Mesh[] _meshes = new Mesh[] { null };
     Material _material;
     uint _randomSeed = 1;
 
@@ -57,14 +57,14 @@ public class NodePool : IDisposable
 
     #region Allocation / deallocation
 
-    void AddNewNode()
+    void AddNewInstance()
     {
         var i = _instances.Count;
 
-        var go = new GameObject("Node", NodeComponents);
+        var go = new GameObject("Instance", InstanceComponents);
         go.hideFlags = HideFlags.HideAndDontSave;
 
-        go.GetComponent<MeshFilter>().sharedMesh = GetShapeForIndex(i);
+        go.GetComponent<MeshFilter>().sharedMesh = GetMeshForIndex(i);
 
         var rend = go.GetComponent<MeshRenderer>();
         rend.sharedMaterial = _material;
@@ -74,7 +74,7 @@ public class NodePool : IDisposable
         InvalidateXforms();
     }
 
-    void RemoveLastNode()
+    void RemoveLastInstance()
     {
         var i = _instances.Count - 1;
 
@@ -90,8 +90,8 @@ public class NodePool : IDisposable
     void ChangeCapacity(int capacity)
     {
         capacity = Mathf.Clamp(capacity, 0, 0x20000);
-        while (_instances.Count < capacity) AddNewNode();
-        while (_instances.Count > capacity) RemoveLastNode();
+        while (_instances.Count < capacity) AddNewInstance();
+        while (_instances.Count > capacity) RemoveLastInstance();
     }
 
     #endregion
@@ -113,26 +113,26 @@ public class NodePool : IDisposable
 
     #endregion
 
-    #region Shape / material methods
+    #region Mesh / material methods
 
-    bool CompareShapes(ReadOnlySpan<Mesh> shapes)
+    bool CompareMeshes(ReadOnlySpan<Mesh> meshes)
     {
-        if (_shapes.Length != shapes.Length) return false;
-        for (var i = 0; i < _shapes.Length; i++)
-            if (_shapes[i] != shapes[i]) return false;
+        if (_meshes.Length != meshes.Length) return false;
+        for (var i = 0; i < _meshes.Length; i++)
+            if (_meshes[i] != meshes[i]) return false;
         return true;
     }
 
-    Mesh GetShapeForIndex(int i)
+    Mesh GetMeshForIndex(int i)
     {
         var rand = Random.CreateFromIndex(RandomSeed ^ (uint)i);
-        return _shapes[rand.NextInt(_shapes.Length)];
+        return _meshes[rand.NextInt(_meshes.Length)];
     }
 
-    void ResetShapes(ReadOnlySpan<Mesh> shapes)
+    void ResetMeshes(ReadOnlySpan<Mesh> meshes)
     {
-        if (CompareShapes(shapes)) return;
-        _shapes = shapes.ToArray();
+        if (CompareMeshes(meshes)) return;
+        _meshes = meshes.ToArray();
         ResetRandomSeed();
     }
 
@@ -141,7 +141,7 @@ public class NodePool : IDisposable
         if (_randomSeed == seed) return;
         for (var i = 0; i < _instances.Count; i++)
             _instances[i].GetComponent<MeshFilter>().sharedMesh
-              = GetShapeForIndex(i);
+              = GetMeshForIndex(i);
     }
 
     void ResetMaterial(Material m)
