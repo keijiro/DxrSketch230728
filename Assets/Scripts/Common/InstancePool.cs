@@ -7,7 +7,7 @@ using UnityEngine.Jobs;
 using Object = UnityEngine.Object;
 using Random = Unity.Mathematics.Random;
 
-namespace Sketch {
+namespace Sketch.Common {
 
 public class InstancePool : IDisposable
 {
@@ -155,4 +155,4 @@ public class InstancePool : IDisposable
     #endregion
 }
 
-} // namespace Sketch
+} // namespace Sketch.Common
