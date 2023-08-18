@@ -1,8 +1,10 @@
-using Sketch.MeshKit;
+using Sketch.Common;
+using Unity.Collections;
+using UnityEngine;
+using UnityEngine.Jobs;
 using UnityEngine.Playables;
 using UnityEngine.Splines;
 using UnityEngine.Timeline;
-using UnityEngine;
 
 namespace Sketch {
 
@@ -10,7 +12,7 @@ namespace Sketch {
 public sealed class ChainRenderer
   : MonoBehaviour, ITimeControl, IPropertyPreview
 {
-    #region Editable attributes
+    #region Editable properties
 
     [field:SerializeField]
     public SplineContainer Spline { get; set; }
@@ -19,10 +21,41 @@ public sealed class ChainRenderer
     public ChainConfig Config { get; set; } = ChainConfig.Default();
 
     [field:SerializeField]
-    public Mesh[] Shapes { get; set; }
+    public Mesh[] Meshes { get; set; }
+
+    [field:SerializeField]
+    public Material Material { get; set; }
 
     [field:SerializeField]
     public float Time { get; set; }
+
+    #endregion
+
+    #region Private members
+
+    InstancePool _pool;
+    bool _isTimeControlled;
+
+    void UpdateXforms()
+      => new ChainUpdateJob()
+           { Config = Config, Spline = new NativeSpline(Spline.Spline, Allocator.TempJob), Time = Time }
+           .Schedule(_pool.Xforms);
+
+    void OnSplineModified(Spline spline)
+      => UpdateXforms();
+
+    #endregion
+
+    #region ITimeControl implementation
+
+    public void OnControlTimeStart() => _isTimeControlled = true;
+    public void OnControlTimeStop() => _isTimeControlled = false;
+    public void SetTime(double time) => Time = (float)time;
+
+    public void GatherProperties
+      (PlayableDirector director, IPropertyCollector driver)
+      => driver.AddFromName<StageRenderer>
+           (gameObject, "<Time>k__BackingField");
 
     #endregion
 
@@ -34,46 +67,24 @@ public sealed class ChainRenderer
     void OnDisable()
     {
         SplineObserver.OnModified -= OnSplineModified;
-        _shapeCache.Destroy();
-        _mesh.Destroy();
+        _pool?.Dispose();
+        _pool = null;
     }
 
     void Update()
-      => ConstructMesh(true);
-
-    #endregion
-
-    #region ITimeControl implementation
-
-    public void OnControlTimeStart() {}
-    public void OnControlTimeStop() {}
-    public void SetTime(double time) => Time = (float)time;
-
-    public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
-      => driver.AddFromName<ChainRenderer>(gameObject, "<Time>k__BackingField");
-
-    #endregion
-
-    #region Private members
-
-    ShapeCache _shapeCache = new ShapeCache();
-    TempMesh _mesh = new TempMesh();
-
-    void OnSplineModified(Spline spline)
-      => ConstructMesh(spline == Spline.Spline);
-
-    void ConstructMesh(bool forceUpdate)
     {
-        if (!forceUpdate) return;
+        if (_pool == null) _pool = new InstancePool();
+        _pool.Capacity = Config.InstanceCount;
+        _pool.Meshes = Meshes;
+        _pool.Material = Material;
+        _pool.RandomSeed = Config.Seed;
+        UpdateXforms();
+    }
 
-        _mesh.Clear();
-
-        if (Shapes == null || Shapes.Length == 0) return;
-        _shapeCache.Update(Shapes);
-
-        var instances = ShapeInstanceBuffer.Get(Config.InstanceCount);
-        ChainBuilder.Build(Time, Config, Spline.Spline, _shapeCache, instances);
-        Baker.Bake(instances, _mesh.Attach(this));
+    void LateUpdate()
+    {
+        if (Application.isPlaying && !_isTimeControlled)
+            Time += UnityEngine.Time.deltaTime;
     }
 
     #endregion

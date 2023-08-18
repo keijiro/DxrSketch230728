@@ -1,17 +1,16 @@
 using Klak.Math;
-using Sketch.Common;
-using Sketch.MeshKit;
-using System;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Jobs;
 using UnityEngine.Splines;
+
 using Random = Unity.Mathematics.Random;
 
 namespace Sketch {
 
 // Configuration struct
-[Serializable]
+[System.Serializable]
 public struct ChainConfig
 {
     [Tooltip("The duration of the animation")]
@@ -55,76 +54,50 @@ public struct ChainConfig
           Seed = 1 };
 }
 
-// Builder implementation
 [BurstCompile]
-static class ChainBuilder
+struct ChainUpdateJob : IJobParallelForTransform
 {
-    // Public entry point
-    public static void Build
-      (float time,
-       in ChainConfig config,
-       Spline spline,
-       ReadOnlySpan<ShapeRef> shapes,
-       Span<ShapeInstance> output)
-    {
-        using var tempSpline = new NativeSpline(spline);
-        unsafe { Build_burst(time, config, &tempSpline, shapes, output); }
-    }
+    public ChainConfig Config;
+    public NativeSpline Spline;
+    public float Time;
 
-    // Bursted entry point
     [BurstCompile]
-    unsafe public static void Build_burst
-      (float time,
-       in ChainConfig cfg,
-       in NativeSpline* ptr_spline,
-       in ReadOnlyRawSpan<ShapeRef> raw_shapes,
-       in RawSpan<ShapeInstance> raw_output)
+    public void Execute(int index, TransformAccess transform)
     {
-        var spline = *ptr_spline;
-        var shapes = raw_shapes.AsReadOnlySpan();
-        var output = raw_output.AsSpan();
+        var cfg = Config;
+        var rand = Random.CreateFromIndex(cfg.Seed ^ (uint)index);
 
-        var rand = new Random(cfg.Seed);
+        var param = (float)index / cfg.InstanceCount;
 
-        for (var i = 0; i < cfg.InstanceCount; i++)
-        {
-            var param = (float)i / cfg.InstanceCount;
+        // Spline point sample
+        float3 pos, tan, up;
+        Spline.Evaluate(param, out pos, out tan, out up);
 
-            // Spline point sample
-            float3 pos, tan, up;
-            spline.Evaluate(param, out pos, out tan, out up);
+        // Random rotation
+        var rz = rand.NextFloat(math.PI * 2);
+        var rx = rand.NextFloat(cfg.Bloom.x, cfg.Bloom.y) * math.PI / 2;
 
-            // Random rotation
-            var rz = rand.NextFloat(math.PI * 2);
-            var rx = rand.NextFloat(cfg.Bloom.x, cfg.Bloom.y) * math.PI / 2;
+        var t = Time - param * cfg.Delay;
+        var fade_dur = rand.NextFloat(cfg.Fade.x, cfg.Fade.y);
+        var fade1 = math.smoothstep(0, fade_dur, t);
+        var fade2 = math.smoothstep(cfg.Lifetime - fade_dur, cfg.Lifetime, t);
+        rz += math.dot(cfg.Spin, math.float3(fade1, t, fade2));
 
-            var t = time - param * cfg.Delay;
-            var fade_dur = rand.NextFloat(cfg.Fade.x, cfg.Fade.y);
-            var fade1 = math.smoothstep(0, fade_dur, t);
-            var fade2 = math.smoothstep(cfg.Lifetime - fade_dur, cfg.Lifetime, t);
-            rz += math.dot(cfg.Spin, math.float3(fade1, t, fade2));
+        var rot = quaternion.LookRotation(tan, up);
+        rot = math.mul(rot, quaternion.RotateZ(rz));
+        rot = math.mul(rot, quaternion.RotateX(rx));
 
-            var rot = quaternion.LookRotation(tan, up);
-            rot = math.mul(rot, quaternion.RotateZ(rz));
-            rot = math.mul(rot, quaternion.RotateX(rx));
+        // Random scale
+        var scale = math.pow(rand.NextFloat(), cfg.Scale.z);
+        scale = math.lerp(cfg.Scale.x, cfg.Scale.y, scale);
+        scale *= (fade1 - fade2);
 
-            // Random scale
-            var scale = math.pow(rand.NextFloat(), cfg.Scale.z);
-            scale = math.lerp(cfg.Scale.x, cfg.Scale.y, scale);
-            scale *= (fade1 - fade2);
+        var dis = math.mul(rot, math.float3(0, 0, 1));
+        pos += dis * rand.NextFloat(cfg.Displacement);
 
-            var dis = math.mul(rot, math.float3(0, 0, 1));
-            pos += dis * rand.NextFloat(cfg.Displacement);
-
-            // Random shape
-            var shape = shapes[rand.NextInt(shapes.Length)];
-
-            output[i] = new MeshKit.ShapeInstance(position: pos,
-                                                  rotation: rot,
-                                                  scale: scale,
-                                                  color: 1,
-                                                  shape: shape);
-        }
+        transform.localPosition = pos;
+        transform.localRotation = rot;
+        transform.localScale = (float3)scale;
     }
 }
 

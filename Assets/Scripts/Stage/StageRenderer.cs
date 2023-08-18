@@ -10,7 +10,7 @@ namespace Sketch {
 public sealed class StageRenderer
   : MonoBehaviour, ITimeControl, IPropertyPreview
 {
-    #region Editable attributes
+    #region Editable properties
 
     [field:SerializeField]
     public StageConfig Config { get; set; } = StageConfig.Default();
@@ -29,9 +29,7 @@ public sealed class StageRenderer
     #region Private members
 
     InstancePool _pool;
-
-    uint TotalInstanceCount
-      => Config.CellCounts.x * Config.CellCounts.y;
+    bool _isTimeControlled;
 
     void UpdateXforms()
       => new StageUpdateJob()
@@ -41,8 +39,6 @@ public sealed class StageRenderer
     #endregion
 
     #region ITimeControl implementation
-
-    bool _isTimeControlled;
 
     public void OnControlTimeStart() => _isTimeControlled = true;
     public void OnControlTimeStop() => _isTimeControlled = false;
@@ -57,10 +53,16 @@ public sealed class StageRenderer
 
     #region MonoBehaviour implementation
 
+    void OnDisable()
+    {
+        _pool?.Dispose();
+        _pool = null;
+    }
+
     void Update()
     {
         if (_pool == null) _pool = new InstancePool();
-        _pool.Capacity = (int)TotalInstanceCount;
+        _pool.Capacity = Config.TotalInstanceCount;
         _pool.Meshes = Meshes;
         _pool.Material = Material;
         _pool.RandomSeed = Config.Seed;
@@ -71,12 +73,6 @@ public sealed class StageRenderer
     {
         if (Application.isPlaying && !_isTimeControlled)
             Time += UnityEngine.Time.deltaTime;
-    }
-
-    void OnDisable()
-    {
-        _pool?.Dispose();
-        _pool = null;
     }
 
     #endregion
