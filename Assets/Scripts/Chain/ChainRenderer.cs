@@ -36,9 +36,11 @@ public sealed class ChainRenderer
     bool _isTimeControlled;
 
     void UpdateXforms()
-      => new ChainUpdateJob()
-           { Config = Config, Spline = new NativeSpline(Spline.Spline, Allocator.TempJob), Time = Time }
-           .Schedule(_pool.Xforms);
+    {
+        using var temp = new NativeSpline(Spline.Spline, Allocator.TempJob);
+        new ChainUpdateJob() { Config = Config, Spline = temp, Time = Time }
+          .Schedule(_pool.Xforms).Complete();
+    }
 
     void OnSplineModified(Spline spline)
       => UpdateXforms();

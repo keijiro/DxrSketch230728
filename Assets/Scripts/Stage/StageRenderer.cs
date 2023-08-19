@@ -31,9 +31,9 @@ public sealed class StageRenderer
     bool _isTimeControlled;
 
     void UpdateXforms()
-      => new StageUpdateJob()
-           { Config = Config, Time = Time,
-             Parent = transform.localToWorldMatrix }.Schedule(_pool.Xforms);
+      => new StageUpdateJob() { Config = Config, Time = Time,
+                                Parent = transform.localToWorldMatrix }
+           .Schedule(_pool.Xforms).Complete();
 
     #endregion
 
