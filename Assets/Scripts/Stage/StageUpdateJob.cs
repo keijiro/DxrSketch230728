@@ -44,13 +44,13 @@ struct StageUpdateJob : IJobParallelForTransform
         var x = (i - (Config.CellCounts.x - 1) * 0.5f) * Config.CellSize;
         var z = (j - (Config.CellCounts.y - 1) * 0.5f) * Config.CellSize;
 
-        var o1 = math.float2(Time * 0.2f, 0);
-        var np = math.float2(x, z) * 0.8f;
-        var y = noise.snoise(np + o1) * 0.2f;
-        y = math.max(0, y);
+        var o1 = math.float2(Time * 0.1f, 0);
+        var np = math.float2(x, z);
+        var y = noise.snoise(np * 0.5f + o1) * 0.2f;
+        y = math.max(0, y * y * y);
 
-        var y2 = noise.snoise(np * 4);
-        y *= y2 * y2 * y2 * y2 * 6;
+        var y2 = noise.snoise(np * 3);
+        y *= math.max(0, y2 * y2 * y2) * 300;
 
         var rot = quaternion.RotateZ(0.4f);
         var scale = Config.InstanceScale;
