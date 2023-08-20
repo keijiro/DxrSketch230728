@@ -60,18 +60,18 @@ public sealed class StageRenderer
 
     void Update()
     {
+        if (Application.isPlaying && !_isTimeControlled)
+            Time += UnityEngine.Time.deltaTime;
+    }
+
+    void LateUpdate()
+    {
         if (_pool == null) _pool = new InstancePool();
         _pool.Capacity = Config.TotalInstanceCount;
         _pool.Meshes = Meshes;
         _pool.Material = Material;
         _pool.RandomSeed = Config.Seed;
         UpdateXforms();
-    }
-
-    void LateUpdate()
-    {
-        if (Application.isPlaying && !_isTimeControlled)
-            Time += UnityEngine.Time.deltaTime;
     }
 
     #endregion
