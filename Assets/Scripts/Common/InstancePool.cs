@@ -139,6 +139,7 @@ public class InstancePool : IDisposable
     void ResetRandomSeed(uint? seed = null)
     {
         if (_randomSeed == seed) return;
+        if (seed != null) _randomSeed = (uint)seed;
         for (var i = 0; i < _instances.Count; i++)
             _instances[i].GetComponent<MeshFilter>().sharedMesh
               = GetMeshForIndex(i);
