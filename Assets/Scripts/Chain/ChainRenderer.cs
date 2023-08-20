@@ -33,7 +33,6 @@ public sealed class ChainRenderer
     #region Private members
 
     InstancePool _pool;
-    bool _isTimeControlled;
 
     void UpdateXforms()
     {
@@ -47,16 +46,13 @@ public sealed class ChainRenderer
 
     #endregion
 
-    #region ITimeControl implementation
+    #region ITimeControl / IPropertyPreview implementation
 
-    public void OnControlTimeStart() => _isTimeControlled = true;
-    public void OnControlTimeStop() => _isTimeControlled = false;
+    public void OnControlTimeStart() {}
+    public void OnControlTimeStop() {}
     public void SetTime(double time) => Time = (float)time;
-
-    public void GatherProperties
-      (PlayableDirector director, IPropertyCollector driver)
-      => driver.AddFromName<StageRenderer>
-           (gameObject, "<Time>k__BackingField");
+    public void GatherProperties(PlayableDirector dir, IPropertyCollector drv)
+      => drv.AddFromName<StageRenderer>(gameObject, "<Time>k__BackingField");
 
     #endregion
 
@@ -70,12 +66,6 @@ public sealed class ChainRenderer
         SplineObserver.OnModified -= OnSplineModified;
         _pool?.Dispose();
         _pool = null;
-    }
-
-    void Update()
-    {
-        if (Application.isPlaying && !_isTimeControlled)
-            Time += UnityEngine.Time.deltaTime;
     }
 
     void LateUpdate()
