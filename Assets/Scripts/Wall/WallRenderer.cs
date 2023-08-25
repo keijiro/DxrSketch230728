@@ -6,13 +6,13 @@ using UnityEngine.Timeline;
 namespace Sketch {
 
 [ExecuteInEditMode]
-public sealed class StageRenderer
+public sealed class WallRenderer
   : MonoBehaviour, ITimeControl, IPropertyPreview
 {
     #region Editable properties
 
     [field:SerializeField]
-    public StageConfig Config { get; set; } = StageConfig.Default();
+    public WallConfig Config { get; set; } = WallConfig.Default();
 
     [field:SerializeField]
     public Mesh[] Meshes { get; set; }
@@ -30,8 +30,7 @@ public sealed class StageRenderer
     InstancePool _pool;
 
     void UpdateXforms()
-      => new StageUpdateJob() { Config = Config, Time = Time,
-                                Parent = transform.localToWorldMatrix }
+      => new WallUpdateJob() { Config = Config, Time = Time }
            .Schedule(_pool.Xforms).Complete();
 
     #endregion
@@ -42,7 +41,7 @@ public sealed class StageRenderer
     public void OnControlTimeStop() {}
     public void SetTime(double time) => Time = (float)time;
     public void GatherProperties(PlayableDirector dir, IPropertyCollector drv)
-      => drv.AddFromName<StageRenderer>(gameObject, "<Time>k__BackingField");
+      => drv.AddFromName<WallRenderer>(gameObject, "<Time>k__BackingField");
 
     #endregion
 
@@ -57,7 +56,7 @@ public sealed class StageRenderer
     void LateUpdate()
     {
         if (_pool == null) _pool = new InstancePool();
-        _pool.Capacity = Config.TotalInstanceCount;
+        _pool.Capacity = Config.InstanceCount;
         _pool.Meshes = Meshes;
         _pool.Material = Material;
         _pool.RandomSeed = Config.Seed;

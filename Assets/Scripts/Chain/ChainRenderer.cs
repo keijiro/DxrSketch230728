@@ -52,7 +52,7 @@ public sealed class ChainRenderer
     public void OnControlTimeStop() {}
     public void SetTime(double time) => Time = (float)time;
     public void GatherProperties(PlayableDirector dir, IPropertyCollector drv)
-      => drv.AddFromName<StageRenderer>(gameObject, "<Time>k__BackingField");
+      => drv.AddFromName<ChainRenderer>(gameObject, "<Time>k__BackingField");
 
     #endregion
 
