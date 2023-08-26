@@ -2,8 +2,10 @@
   "dependencies": {
     "com.unity.recorder": "4.0.1",
     "com.unity.render-pipelines.high-definition": "15.0.6",
+    "com.unity.rendering.denoising": "1.0.0",
     "com.unity.splines": "2.4.0",
     "com.unity.timeline": "1.8.4",
+    "jp.keijiro.danish-statues": "1.0.0",
     "jp.keijiro.hdrpextra.sky": "1.0.0",
     "jp.keijiro.klak.math": "2.1.0",
     "jp.keijiro.klak.motion": "1.1.0",
