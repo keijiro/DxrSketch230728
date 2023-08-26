@@ -1232,7 +1232,7 @@ PlayableDirector:
   m_GameObject: {fileID: 1867155516}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 3d787b248bf0d4241bda1aa387a22b1e, type: 2}
+  m_PlayableAsset: {fileID: 11400000, guid: 7d3572b3c2e790540b097bb83e4ab6ca, type: 2}
   m_InitialState: 1
   m_WrapMode: 1
   m_DirectorUpdateMode: 1
@@ -1244,7 +1244,8 @@ PlayableDirector:
     value: {fileID: 2141782438}
   m_ExposedReferences:
     m_References:
-    - fcd1979f8684b5b48a11fcc8943dade4: {fileID: 0}
+    - f92f5c9e5b2cef14f9384b0397a906e1: {fileID: 1944944273}
+    - fcd1979f8684b5b48a11fcc8943dade4: {fileID: 1944944273}
     - 74f920d95b2120940818c9c2205d83fb: {fileID: 0}
 --- !u!4 &1867155518
 Transform:
@@ -1352,7 +1353,10 @@ MonoBehaviour:
       y: 1
       z: 2
       w: 4
-    Seed: 396
+    Speed:
+      x: 0.1
+      y: -0.1
+    Seed: 396324
   <Meshes>k__BackingField:
   - {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   <Material>k__BackingField: {fileID: 2100000, guid: 5396fe3c3df277c4aae491be72f6d4d1, type: 2}
@@ -1612,7 +1616,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2141782438}
-  - component: {fileID: 2141782439}
   m_Layer: 0
   m_Name: Jitter
   m_TagString: Untagged
@@ -1636,29 +1639,6 @@ Transform:
   - {fileID: 597040487}
   m_Father: {fileID: 29036650}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2141782439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141782437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 543ddbe12367a4899b011d43ef41f357, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  positionAmount:
-    x: 1
-    y: 1
-    z: 1
-  rotationAmount:
-    x: 10
-    y: 10
-    z: 10
-  frequency: 0.1
-  octaves: 2
-  seed: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

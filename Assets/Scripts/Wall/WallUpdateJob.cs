@@ -16,6 +16,7 @@ public struct WallConfig
     public float2 Height;
     public float2 Radius;
     public float4 Size;
+    public float2 Speed;
 
     [Tooltip("The random number seed")]
     public uint Seed;
@@ -41,9 +42,10 @@ struct WallUpdateJob : IJobParallelForTransform
         var y = rand.NextFloat(Config.Height.x, Config.Height.y);
         var l = rand.NextFloat(Config.Radius.x, Config.Radius.y);
         var s = rand.NextFloat2(Config.Size.xy, Config.Size.zw);
+        var vr = rand.NextFloat(Config.Speed.x, Config.Speed.y);
 
         var pos = math.float3(0, y, l);
-        var rot = quaternion.RotateY(rand.NextFloat(math.PI * 2));
+        var rot = quaternion.RotateY(vr * (Time + 1000));
 
         transform.localPosition = math.mul(rot, pos);
         transform.localRotation = rot;
