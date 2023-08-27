@@ -10,7 +10,7 @@ Material:
   m_Name: Stage
   m_Shader: {fileID: -6465566751694194690, guid: 985f7c281f694b940bbb2de205a53dc3, type: 3}
   m_Parent: {fileID: -876546973899608171, guid: 985f7c281f694b940bbb2de205a53dc3, type: 3}
-  m_ModifiedSerializedProperties: 0
+  m_ModifiedSerializedProperties: 16
   m_ValidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   m_InvalidKeywords: []
