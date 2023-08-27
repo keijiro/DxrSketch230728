@@ -175,7 +175,7 @@ MonoBehaviour:
   active: 1
   skyType:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 14780145
   cloudType:
     m_OverrideState: 0
     m_Value: 0
@@ -206,7 +206,7 @@ MonoBehaviour:
   active: 1
   rotation:
     m_OverrideState: 1
-    m_Value: 180
+    m_Value: 290
   skyIntensityMode:
     m_OverrideState: 0
     m_Value: 0

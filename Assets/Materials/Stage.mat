@@ -24,7 +24,6 @@ Material:
   - TransparentDepthPrepass
   - TransparentDepthPostpass
   - TransparentBackface
-  - RayTracingPrepass
   - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
@@ -40,6 +39,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _RayTracing: 1
     - _Scale: 0.3
     - _Smoothness: 0.9
     m_Colors:

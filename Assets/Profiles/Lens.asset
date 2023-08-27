@@ -1,51 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4997162227834168082
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcf384b154398e341b6b29969c078198, type: 3}
-  m_Name: MotionBlur
-  m_EditorClassIdentifier: 
-  active: 0
-  quality:
-    m_OverrideState: 0
-    m_Value: 1
-  intensity:
-    m_OverrideState: 0
-    m_Value: 0
-  maximumVelocity:
-    m_OverrideState: 0
-    m_Value: 200
-  minimumVelocity:
-    m_OverrideState: 0
-    m_Value: 2
-  cameraMotionBlur:
-    m_OverrideState: 0
-    m_Value: 1
-  specialCameraClampMode:
-    m_OverrideState: 0
-    m_Value: 0
-  cameraVelocityClamp:
-    m_OverrideState: 0
-    m_Value: 0.05
-  cameraTranslationVelocityClamp:
-    m_OverrideState: 0
-    m_Value: 0.05
-  cameraRotationVelocityClamp:
-    m_OverrideState: 0
-    m_Value: 0.03
-  depthComparisonExtent:
-    m_OverrideState: 0
-    m_Value: 1
-  m_SampleCount:
-    m_OverrideState: 0
-    m_Value: 8
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,7 +15,6 @@ MonoBehaviour:
   components:
   - {fileID: 4245861284536954160}
   - {fileID: 161331980924963185}
-  - {fileID: -4997162227834168082}
 --- !u!114 &161331980924963185
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -80,7 +33,7 @@ MonoBehaviour:
     m_Value: 0
   color:
     m_OverrideState: 1
-    m_Value: {r: 0.25028878, g: 0.6132076, b: 0.16583596, a: 1}
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
   center:
     m_OverrideState: 0
     m_Value: {x: 0.5, y: 0.5}
@@ -117,7 +70,7 @@ MonoBehaviour:
   active: 1
   quality:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 3
   focusMode:
     m_OverrideState: 1
     m_Value: 1
@@ -159,7 +112,7 @@ MonoBehaviour:
     m_Value: 1
   m_PhysicallyBased:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   m_LimitManualRangeNearBlur:
     m_OverrideState: 1
     m_Value: 0
