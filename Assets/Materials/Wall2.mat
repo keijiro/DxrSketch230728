@@ -47,7 +47,6 @@ Material:
     m_Colors:
     - _DoubleSidedConstants: {r: -1, g: -1, b: -1, a: 0}
     - _Emission: {r: 91.79578, g: 357.81622, b: 357.81622, a: 0.9764706}
-    - _Overlay: {r: 1, g: 1, b: 1, a: 0.69411767}
   m_BuildTextureStacks: []
 --- !u!114 &2733111936240472516
 MonoBehaviour:

@@ -46,7 +46,6 @@ Material:
     - _DoubleSidedNormalMode: 0
     m_Colors:
     - _DoubleSidedConstants: {r: -1, g: -1, b: -1, a: 0}
-    - _Overlay: {r: 1, g: 1, b: 1, a: 0.69411767}
   m_BuildTextureStacks: []
 --- !u!114 &2733111936240472516
 MonoBehaviour:

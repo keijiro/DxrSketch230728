@@ -41,8 +41,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Scale: 0.3
-    m_Colors:
-    - _Overlay: {r: 1, g: 1, b: 1, a: 0.6666667}
+    m_Colors: []
   m_BuildTextureStacks: []
 --- !u!114 &9208465745622629425
 MonoBehaviour:
