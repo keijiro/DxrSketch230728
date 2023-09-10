@@ -156,7 +156,7 @@ MonoBehaviour:
       m_Bits: 4294967295
   maxDepth:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 4
   rayLength:
     m_OverrideState: 1
     m_Value: 50
