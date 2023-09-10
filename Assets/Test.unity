@@ -1656,6 +1656,11 @@ MonoBehaviour:
     Radius:
       x: 30
       y: 32
+    Scale:
+      x: 1
+      y: 0.8
+      z: 4
+      w: 0.2
     Size:
       x: 1
       y: 0.8
@@ -2089,6 +2094,11 @@ MonoBehaviour:
     Radius:
       x: 30
       y: 32
+    Scale:
+      x: 1
+      y: 1
+      z: 2
+      w: 4
     Size:
       x: 1
       y: 1

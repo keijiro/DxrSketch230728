@@ -88,12 +88,6 @@
         "com.unity.render-pipelines.core": "15.0.6"
       }
     },
-    "com.unity.rendering.denoising": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {}
-    },
     "com.unity.searcher": {
       "version": "4.9.2",
       "depth": 2,
@@ -140,7 +134,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.4",
+      "version": "1.8.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
