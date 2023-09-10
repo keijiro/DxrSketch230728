@@ -44,8 +44,6 @@ Material:
     - _CullMode: 0
     - _CullModeForward: 0
     - _DoubleSidedNormalMode: 0
-    - _RayTracing: 0
-    - _Smoothness: 0.9
     m_Colors:
     - _DoubleSidedConstants: {r: -1, g: -1, b: -1, a: 0}
     - _Emission: {r: 91.79578, g: 357.81622, b: 357.81622, a: 0.9764706}
