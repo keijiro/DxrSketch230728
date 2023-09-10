@@ -1587,6 +1587,69 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 6685c0f341e7c594fb821996348fc87a, type: 2}
+--- !u!1 &1067747757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1067747759}
+  - component: {fileID: 1067747758}
+  m_Layer: 0
+  m_Name: Star
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1067747758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067747757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a2ccf9ad43c8524ba0adf1c7d62d7c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField:
+    InstanceCount: 16
+    Lifetime: 1
+    Fade: 0.5
+    Spin:
+      x: 0.5
+      y: 0.5
+    Displacement: 0.13
+    Scale:
+      x: 0.2
+      y: 0.4
+      z: 1.5
+    Seed: 1
+  <Meshes>k__BackingField:
+  - {fileID: 4702925393065980420, guid: bd7d57e92286b3242bedcf3b181254cf, type: 3}
+  - {fileID: 4702925393065980420, guid: dacb1ee807986724bbdf5c333266cd31, type: 3}
+  - {fileID: 4702925393065980420, guid: 4772df86f62961c4e9b94a800f097a06, type: 3}
+  <Material>k__BackingField: {fileID: 2100000, guid: fcea4b3a80a515740911879f42ccf7b8, type: 2}
+  <Time>k__BackingField: 0
+--- !u!4 &1067747759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067747757}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.024526961, y: -0.945949, z: 0.32276058, w: -0.0201142}
+  m_LocalPosition: {x: -0.662, y: 1.47, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 37.706, y: -181.609, z: 722.421}
 --- !u!1 &1206122638
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,11 +1720,6 @@ MonoBehaviour:
       x: 30
       y: 32
     Scale:
-      x: 1
-      y: 0.8
-      z: 4
-      w: 0.2
-    Size:
       x: 1
       y: 0.8
       z: 4
@@ -2021,13 +2079,15 @@ PlayableDirector:
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 7d3572b3c2e790540b097bb83e4ab6ca, type: 2}
   m_InitialState: 1
-  m_WrapMode: 2
+  m_WrapMode: 1
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
   - key: {fileID: 146650516644036299, guid: 3d787b248bf0d4241bda1aa387a22b1e, type: 2}
     value: {fileID: 0}
   - key: {fileID: 2297056444461482867, guid: 3d787b248bf0d4241bda1aa387a22b1e, type: 2}
+    value: {fileID: 2141782438}
+  - key: {fileID: 1994915281442719198, guid: 7d3572b3c2e790540b097bb83e4ab6ca, type: 2}
     value: {fileID: 2141782438}
   m_ExposedReferences:
     m_References:
@@ -2038,6 +2098,7 @@ PlayableDirector:
     - 18a02196ec3c207499bf8de0b456f9e4: {fileID: 0}
     - e59d2cfc9fca73a47a25b4f2b011c411: {fileID: 453288970}
     - 74f920d95b2120940818c9c2205d83fb: {fileID: 0}
+    - 1841482f9b69c0e479dd436097832236: {fileID: 1067747757}
     - 368bedd7f40e8974ca0a2d54c1c0980a: {fileID: 453288970}
     - b41963ddc85e5f94d8fd19146cc6cc50: {fileID: 453288970}
     - 34f9a90e24cdbfd48916ef8a52261b22: {fileID: 453288970}
@@ -2095,11 +2156,6 @@ MonoBehaviour:
       x: 30
       y: 32
     Scale:
-      x: 1
-      y: 1
-      z: 2
-      w: 4
-    Size:
       x: 1
       y: 1
       z: 2
@@ -2379,3 +2435,4 @@ SceneRoots:
   - {fileID: 453288973}
   - {fileID: 711984800}
   - {fileID: 686974696}
+  - {fileID: 1067747759}
