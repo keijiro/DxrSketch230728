@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 363.37228, g: 363.38455, b: 363.39957, a: 1}
+  m_IndirectSpecularColor: {r: 45.581703, g: 45.598026, b: 45.6157, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -169,6 +169,76 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: ed5f677fe75a471458ad52e668db15a7, type: 2}
+--- !u!1 &17332627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 17332629}
+  - component: {fileID: 17332628}
+  m_Layer: 0
+  m_Name: Scatter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &17332628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17332627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef5fc44841aeee447a5143f5901a0507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField:
+    InstanceCount: 300
+    Extent:
+      x: 8
+      y: 2
+      z: 8
+    Lifetime: 3
+    Fade: 1
+    Spin:
+      x: 0.5
+      y: 0.5
+    Scale:
+      x: 0.1
+      y: 0.3
+      z: 1.5
+    Velocity:
+      x: 0
+      y: 0
+      z: 0.1
+    Seed: 1
+  <Meshes>k__BackingField:
+  - {fileID: 4702925393065980420, guid: bd7d57e92286b3242bedcf3b181254cf, type: 3}
+  - {fileID: 4702925393065980420, guid: dacb1ee807986724bbdf5c333266cd31, type: 3}
+  - {fileID: 4702925393065980420, guid: 4772df86f62961c4e9b94a800f097a06, type: 3}
+  <Material>k__BackingField: {fileID: 2100000, guid: fcea4b3a80a515740911879f42ccf7b8, type: 2}
+  <Time>k__BackingField: 0
+--- !u!4 &17332629
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17332627}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &29036649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1444,7 +1514,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!73398921 &711984798
 VFXRenderer:
   serializedVersion: 1
@@ -1453,7 +1523,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711984797}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1603,7 +1673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1067747758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2096,6 +2166,7 @@ PlayableDirector:
     - 5209a3f21f4d98241904805ec9776450: {fileID: 453288970}
     - f92f5c9e5b2cef14f9384b0397a906e1: {fileID: 1944944273}
     - fcd1979f8684b5b48a11fcc8943dade4: {fileID: 1944944273}
+    - 4a9712dd123c1ab4483c3eef8499fb00: {fileID: 17332627}
     - 6c726f9c1b8c199428fc10b946906d17: {fileID: 453288970}
     - 18a02196ec3c207499bf8de0b456f9e4: {fileID: 0}
     - e59d2cfc9fca73a47a25b4f2b011c411: {fileID: 453288970}
@@ -2438,3 +2509,4 @@ SceneRoots:
   - {fileID: 711984800}
   - {fileID: 686974696}
   - {fileID: 1067747759}
+  - {fileID: 17332629}
