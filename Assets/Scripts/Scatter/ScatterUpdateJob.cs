@@ -29,7 +29,11 @@ public struct ScatterConfig
     [Tooltip("The instance scale (min, max, exp)")]
     public float3 Scale;
 
-    public float3 Velocity;
+    [Tooltip("The speed parameters (min, max, spread)")]
+    public float3 Speed;
+
+    [Tooltip("The turbulence parameters (freq, amount)")]
+    public float2 Noise;
 
     [Tooltip("The random number seed")]
     public uint Seed;
@@ -43,7 +47,8 @@ public struct ScatterConfig
           Fade = 0.5f,
           Spin = 0.5f,
           Scale = math.float3(0.2f, 1, 1.5f),
-          Velocity = math.float3(0, 0, 0.1f),
+          Speed = math.float3(0.1f, 1, 0.1f),
+          Noise = math.float2(0.1f, 0.1f),
           Seed = 1 };
 }
 
@@ -83,12 +88,22 @@ struct ScatterUpdateJob : IJobParallelForTransform
         rot = math.mul(rot, quaternion.AxisAngle(raxis, rvel * time01));
         rot = math.mul(math.quaternion(Root), rot);
 
-        // Position
+        // Velocity
+        var vel = math.float3(0, 0, 1);
+        vel = math.lerp(vel, rand.NextFloat3Direction(), Config.Speed.z);
+        vel = math.normalize(vel);
+        vel *= rand.NextFloat(Config.Speed.x, Config.Speed.y);
+
+        // Position without turbulence
         var pos = math.transform(Root, 0);
         pos += rand.NextFloat3(-0.5f, 0.5f) * Config.Extent;
-        //var disp = math.float3(0, 0, rand.NextFloat(Config.Displacement));
-        //pos += math.mul(rot, disp);
-        pos += Config.Velocity * time01 * period;
+        pos += vel * time01 * period;
+
+        // Tubulence
+        float3 grad1, grad2;
+        noise.snoise(pos.xyz *  Config.Noise.x, out grad1);
+        noise.snoise(pos.zyx * -Config.Noise.x, out grad2);
+        pos += math.cross(grad1, grad2) * Config.Noise.y;
 
         // Transform components
         var scale = math.pow(rand.NextFloat(), Config.Scale.z);
