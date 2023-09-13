@@ -23,6 +23,9 @@ public struct ScatterConfig
     [Tooltip("The fading duration")]
     public float Fade;
 
+    [Tooltip("Initial random rotation")]
+    public bool RandomRotation;
+
     [Tooltip("The angular speed (min, max)")]
     public float2 Spin;
 
@@ -45,6 +48,7 @@ public struct ScatterConfig
           Extent = 1,
           Lifetime = 2,
           Fade = 0.5f,
+          RandomRotation = true,
           Spin = 0.5f,
           Scale = math.float3(0.2f, 1, 1.5f),
           Speed = math.float3(0.1f, 1, 0.1f),
@@ -82,7 +86,8 @@ struct ScatterUpdateJob : IJobParallelForTransform
         var fade2 = math.smoothstep(1 - ifade, 1, time01);
 
         // Rotation
-        var rot = rand.NextQuaternionRotation();
+        var rot = Config.RandomRotation ?
+          rand.NextQuaternionRotation() : quaternion.identity;
         var raxis = rand.NextFloat3Direction();
         var rvel = rand.NextFloat(Config.Spin.x, Config.Spin.y) * period;
         rot = math.mul(rot, quaternion.AxisAngle(raxis, rvel * time01));

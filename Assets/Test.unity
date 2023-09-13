@@ -206,6 +206,7 @@ MonoBehaviour:
       z: 5
     Lifetime: 3
     Fade: 1
+    RandomRotation: 1
     Spin:
       x: 0.5
       y: 0.5
@@ -1778,6 +1779,7 @@ MonoBehaviour:
       z: 5
     Lifetime: 3
     Fade: 1
+    RandomRotation: 1
     Spin:
       x: 4
       y: 10
@@ -2127,8 +2129,11 @@ PlayableDirector:
     value: {fileID: 2141782438}
   - key: {fileID: 7175243415368742459, guid: 7d3572b3c2e790540b097bb83e4ab6ca, type: 2}
     value: {fileID: 1644190568}
+  - key: {fileID: 8141390686700856181, guid: 7d3572b3c2e790540b097bb83e4ab6ca, type: 2}
+    value: {fileID: 1965437762}
   m_ExposedReferences:
     m_References:
+    - 6de9f67900d83fb4ab2d4d03ae3f700a: {fileID: 1965437759}
     - 5209a3f21f4d98241904805ec9776450: {fileID: 453288970}
     - f92f5c9e5b2cef14f9384b0397a906e1: {fileID: 1944944273}
     - fcd1979f8684b5b48a11fcc8943dade4: {fileID: 1944944273}
@@ -2223,6 +2228,101 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1965437759
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1965437761}
+  - component: {fileID: 1965437760}
+  - component: {fileID: 1965437762}
+  m_Layer: 0
+  m_Name: Warp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1965437760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965437759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef5fc44841aeee447a5143f5901a0507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField:
+    InstanceCount: 200
+    Extent:
+      x: 3
+      y: 2
+      z: 0
+    Lifetime: 1
+    Fade: 0.001
+    RandomRotation: 0
+    Spin:
+      x: 0
+      y: 0
+    Scale:
+      x: 1
+      y: 1
+      z: 1
+    Speed:
+      x: 25
+      y: 25
+      z: 0
+    Noise:
+      x: 0
+      y: 0
+    Seed: 436
+  <Meshes>k__BackingField:
+  - {fileID: -8670151273213183110, guid: 97d8dff2650685445a6e7826b26a3f2d, type: 3}
+  <Material>k__BackingField: {fileID: 2100000, guid: af83009f42665aa4aa5ca99e720c2952, type: 2}
+  <Time>k__BackingField: 0
+--- !u!4 &1965437761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965437759}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1965437762
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965437759}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2005516785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2477,3 +2577,4 @@ SceneRoots:
   - {fileID: 1067747759}
   - {fileID: 17332629}
   - {fileID: 1576427217}
+  - {fileID: 1965437761}
